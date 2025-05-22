@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/oskarziembrowicz/WatchParty-Node-App/issues"
   },
-  "homepage": "https://github.com/oskarziembrowicz/WatchParty-Node-App#readme"
+  "homepage": "https://github.com/oskarziembrowicz/WatchParty-Node-App#readme",
+  "dependencies": {
+    "express": "^5.1.0"
+  }
 }
