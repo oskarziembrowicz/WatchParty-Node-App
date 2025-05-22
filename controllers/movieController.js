@@ -11,7 +11,8 @@ exports.getAllMovies = (req, res, next) => {
   //       'trakt-api-version': 2,
   //     },
   //   }).then((response) => console.log(response));
-  fetch(`${omdbURL}t=spider-man`)
+  console.log(req.query.title);
+  fetch(`${omdbURL}t=${req.query.title}`)
     .then((response) => response.json())
     .then((data) => {
       console.log(data);
