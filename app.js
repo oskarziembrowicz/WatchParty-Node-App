@@ -1,4 +1,5 @@
-const express = require("express");
+const express = require('express');
+const partyRouter = require('./routes/partyRouter');
 
 const app = express();
 
@@ -40,12 +41,12 @@ app.use(
 */
 
 // Development logging
-if (process.env.NODE_ENV === "development") {
-  app.use(morgan("dev"));
+if (process.env.NODE_ENV === 'development') {
+  app.use(morgan('dev'));
 }
 
 // Body parser, reading data from body into req.body
-app.use(express.json({ limit: "10kb" }));
+app.use(express.json({ limit: '10kb' }));
 
 // Test middleware
 app.use((req, res, next) => {
@@ -55,5 +56,6 @@ app.use((req, res, next) => {
 });
 
 // 2. ROUTES
+app.use('/api/v1/parties', partyRouter);
 
 module.exports = app;
