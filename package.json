@@ -1,0 +1,19 @@
+{
+  "name": "watchparty-node-app",
+  "version": "1.0.0",
+  "description": "Application for organising watch parties with friends (made with Node.js)",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oskarziembrowicz/WatchParty-Node-App.git"
+  },
+  "author": "Oskar Ziembrowicz",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/oskarziembrowicz/WatchParty-Node-App/issues"
+  },
+  "homepage": "https://github.com/oskarziembrowicz/WatchParty-Node-App#readme"
+}
