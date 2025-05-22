@@ -1,5 +1,6 @@
 const express = require('express');
 const partyRouter = require('./routes/partyRouter');
+const movieRouter = require('./routes/movieRouter');
 
 const app = express();
 
@@ -57,5 +58,6 @@ app.use((req, res, next) => {
 
 // 2. ROUTES
 app.use('/api/v1/parties', partyRouter);
+app.use('/api/v1/movies', movieRouter);
 
 module.exports = app;
