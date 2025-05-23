@@ -1,0 +1,37 @@
+[
+  {
+    "name": "Romantic Cinema",
+    "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi vel sem non erat commodo feugiat. Nam sit amet mauris enim. Cras feugiat purus in arcu facilisis rhoncus. Aliquam erat volutpat. Aliquam id ultricies dolor. Nam non ante justo.",
+    "startDate": "2025-06-02,20:30",
+    "isOnline": true,
+    "joinLink": "https://some-example-link.com",
+    "movies": ["tt0332280", "tt0120338"],
+    "creationDate": "2025-05-23,13:30"
+  },
+  {
+    "name": "It's Shrek Time",
+    "startDate": "2025-05-30,18:00",
+    "isOnline": false,
+    "address": "Poli Gojawiczyńskiej 18",
+    "movies": ["tt0126029", "tt0298148", "tt0413267", "tt0892791"],
+    "creationDate": "2025-05-23,14:00"
+  },
+  {
+    "name": "May The Force Be With You",
+    "description": "Mauris venenatis cursus molestie. Vestibulum vestibulum, tellus at dictum feugiat, nibh dui pharetra enim, feugiat eleifend felis libero ac dolor.",
+    "startDate": "2025-07-01,17:40",
+    "isOnline": true,
+    "joinLink": "https://some-example-link.com",
+    "movies": ["tt0076759", "tt0080684", "tt0086190"],
+    "creationDate": "2025-05-23,14:30"
+  },
+  {
+    "name": "The Misty Mountains Call",
+    "description": "Aenean sed neque sollicitudin, faucibus erat ac, aliquet turpis. Nunc facilisis sapien massa, eget laoreet libero efficitur elementum. Maecenas venenatis nisl vel metus vehicula, vitae dapibus est lobortis. Praesent vel nisi ipsum.",
+    "startDate": "2025-06-10,16:00",
+    "isOnline": false,
+    "address": "Poli Gojawiczyńskiej 18",
+    "movies": ["tt0903624", "tt1170358", "tt2310332"],
+    "creationDate": "2025-05-23,15:00"
+  }
+]

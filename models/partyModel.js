@@ -3,15 +3,12 @@ const mongoose = require('mongoose');
 const partySchema = new mongoose.Schema({
   name: {
     type: String,
-    required: [true, 'A party must have a name'],
+    // required: [true, 'A party must have a name'],
   },
-  description: {
-    type: String,
-    required: [true, 'A party must have a description'],
-  },
+  description: String,
   startDate: {
     type: Date,
-    required: [true, 'A party must have a start date'],
+    // required: [true, 'A party must have a start date'],
   },
   isOnline: {
     type: Boolean,
@@ -19,10 +16,10 @@ const partySchema = new mongoose.Schema({
   },
   joinLink: String,
   address: String,
-  //   movies: [mongoose.Types.ObjectId],
+  movies: [String],
   //   participants: [mongoose.Types.ObjectId],
-  usefulLinks: [String],
-  sharedFiles: [File],
+  // usefulLinks: [String],
+  // sharedFiles: [File],
   creationDate: {
     type: Date,
     default: Date.now,
