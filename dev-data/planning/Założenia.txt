@@ -1,0 +1,29 @@
+Aplikacja Filmowa (#movie #party #share #opinions #event)
+
+W aplikacji można tworzyć listę ulubionych filmów, a także tworzyć zaplanowane wydarzenia filmowe (watchparty, noc filmów itp),
+zapraszać na nie znajomych oraz dzielić się wspólnymi wrażeniami, które zostaną zapisane na tablicy
+
+Użycia:
+1. Użytkownik może się zarejestrować oraz zalogować
+2. Użytkownik może przeszukiwać bazę filmów -> Użytkownik może dodawać filmy do zapisanych (obejrzane, planowane?)
+3. Użytkownik może wyszukiwać innych użytkowników -> użytkownik może dodawać użytkowników do znajomych
+4. Użytkownik może tworzyć wydarzenia filmowe (party) -> użytkownik może dodawać filmy do party -> użytkownik może dodawać innych użytkowników do party
+	-> użytkownicy w party mogą edytować elementy party (np. filmy) -> użytkownicy mogą dzielić się wrażeniami i opiniami o filmie z party
+	-> po zakończeniu party zostanie ono zapisane w archiwum (tablicy) użytkowników biorących udział (przede wszystkim opinie o filmach i wieczorze)
+
+Wydarzenie:
+1. Nazwa wydarzenia
+2. Data rozpoczącia
+3. Status wydarzenia: oczekujące, trwające, zakończone
+4. Miejsce: lokalizacja (adres) lub status online
+5. Sekcja "przydatne linki"
+6. Lista uczestników
+7. Lista filmów
+8. Opinie: "wrażenia z wyadrzenia", "wrażenia z filmu1", "wrażenia z filmu2"
+
+Użytkownik:
+1. Nick
+2. Wydarzenia
+3. Zapisane filmy
+4. Lista znajomych
+5. Archiwum wydarzeń

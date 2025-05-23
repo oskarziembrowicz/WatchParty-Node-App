@@ -1,8 +1,10 @@
 const dotenv = require('dotenv');
+const catchAsync = require('../utils/catchAsync');
+
 dotenv.config({ path: './config.env' });
 const omdbURL = `http://www.omdbapi.com/?apikey=${process.env.OMDB_API_KEY}&`;
 
-exports.getAllMovies = (req, res, next) => {
+exports.getAllMovies = catchAsync(async (req, res, next) => {
   //   fetch('https://api.trakt.tv', {
   //     headers: {
   //       'Content-Type': 'application/json',
@@ -11,14 +13,24 @@ exports.getAllMovies = (req, res, next) => {
   //       'trakt-api-version': 2,
   //     },
   //   }).then((response) => console.log(response));
-  console.log(req.query.title);
-  fetch(`${omdbURL}t=${req.query.title}`)
-    .then((response) => response.json())
-    .then((data) => {
-      console.log(data);
-      res.status(200).json({
-        status: 'success',
-        data,
-      });
-    });
-};
+  const response = await fetch(`${omdbURL}t=${req.query.title}`);
+  const data = await response.json();
+  res.status(200).json({
+    status: 'success',
+    data: {
+      result: data,
+    },
+  });
+});
+
+exports.getMovieById = catchAsync(async (req, res, next) => {
+  const response = await fetch(`${omdbURL}i=${req.params.id}`);
+  const data = await response.json();
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      movie: data,
+    },
+  });
+});
