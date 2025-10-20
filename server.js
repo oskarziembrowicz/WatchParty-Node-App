@@ -2,13 +2,14 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const app = require('./app');
 
-dotenv.config({ path: './config.env' });
+dotenv.config({ path: './.env' });
 
 // Connect to database
-const DB = process.env.DATABASE.replace(
-  '<DB_PASSWORD>',
-  process.env.DATABASE_PASSWORD
-);
+const DB = process.env.DATABASE;
+// const DB = process.env.DATABASE.replace(
+//   '<DB_PASSWORD>',
+//   process.env.DATABASE_PASSWORD
+// );
 mongoose.set('strictQuery', false);
 mongoose.connect(DB).then(() => console.log('Connected to database'));
 
