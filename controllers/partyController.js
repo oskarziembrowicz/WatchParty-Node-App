@@ -50,3 +50,30 @@ exports.addMovie = catchAsync(async (req, res, next) => {
     },
   });
 });
+
+exports.removeMovie = catchAsync(async (req, res, next) => {
+  const partyId = req.params.id;
+  const { movieId } = req.params;
+  const party = await Party.findById(partyId);
+
+  if (!party) {
+    return next(new AppError('No party found with that ID', 404));
+  }
+
+  // Protect against removing a movie that is not in the party
+  if (!party.movies.includes(req.params.movieId)) {
+    return next(new AppError('Movie not found in party', 404));
+  }
+
+  party.movies = party.movies.filter((movie) => movie !== movieId);
+  const updatedParty = await Party.findByIdAndUpdate(partyId, party, {
+    new: true,
+  });
+
+  res.status(204).json({
+    status: 'success',
+    data: {
+      updatedParty,
+    },
+  });
+});

@@ -10,7 +10,7 @@
   - [x] Get a party
   - [x] Get all parties
   - [x] Add movie
-  - [ ] Remove movie
+  - [x] Remove movie
   - [ ] Add participant
   - [ ] Remove participant
   - [ ] Update party
