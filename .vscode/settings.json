@@ -11,7 +11,9 @@
     "source.fixAll.eslint": "explicit"
   },
   "javascript.suggest.autoImports": true,
+  "javascript.preferences.importModuleSpecifier": "relative",
   "javascript.updateImportsOnFileMove.enabled": "always",
   "typescript.suggest.autoImports": true,
+  "typescript.preferences.importModuleSpecifier": "relative",
   "typescript.updateImportsOnFileMove.enabled": "always"
 }
