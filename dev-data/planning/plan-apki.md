@@ -15,8 +15,8 @@
   - [ ] Remove participant
   - [ ] Update party
 - [ ] User endpoints:
-  - [ ] Register
-  - [ ] Login
+  - [x] Register
+  - [x] Login
   - [ ] Logout
   - [ ] Get my data
   - [ ] Get user by id

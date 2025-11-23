@@ -1,7 +1,11 @@
 const jwt = require('jsonwebtoken');
+const { promisify } = require('util');
 const User = require('../models/userModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
+
+// Promisify jwt.verify
+const verifyToken = promisify(jwt.verify);
 
 const signToken = (id) =>
   // @ts-ignore - process.env values are checked at runtime
@@ -70,4 +74,43 @@ exports.login = catchAsync(async (req, res, next) => {
 
   // 3. Send token to client
   createSendToken(user, 200, res);
+});
+
+exports.protect = catchAsync(async (req, res, next) => {
+  // 1. Get token and check if it exists
+  let token;
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith('Bearer')
+  ) {
+    token = req.headers.authorization.split(' ')[1];
+  }
+
+  if (!token) {
+    return next(
+      new AppError('You are not logged in! Please log in to get access', 401),
+    );
+  }
+
+  // 2. Verify the token
+  // @ts-ignore - process.env.JWT_SECRET is validated at runtime
+  const decoded = await verifyToken(token, process.env.JWT_SECRET);
+
+  // 3. Check if user still exists
+  // @ts-ignore - decoded is a JWT payload with id property
+  const currentUser = await User.findById(decoded.id);
+  if (!currentUser) {
+    return next(new AppError('This user does not exist!', 401));
+  }
+
+  // 4. TODO: Check if user changed passwords after token was issued
+  // if (currentUser.changedPasswordAfter(decoded.iat)) {
+  //   return next(
+  //     new AppError('User recently changed password! Plase log in again.', 401),
+  //   );
+  // }
+
+  // GRANT ACCESS TO PROTECTED ROUTE
+  req.user = currentUser;
+  next();
 });
