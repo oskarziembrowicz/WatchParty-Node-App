@@ -16,14 +16,14 @@ const createSendToken = (user, statusCode, res) => {
         Number(process.env.JWT_COOKIE_EXPIRES_IN) * 24 * 60 * 60 * 1000,
     ),
     // secure: true, // This should be true only in production (for https)
-    httpOnly: true, // This cannot be accessed or modified bu the browser
+    // TODO: httpOnly: true, // This cannot be accessed or modified by the browser
   };
   if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
 
   res.cookie('jwt', token, cookieOptions);
 
-  // Remove password from the output
-  user.password = undefined;
+  // TODO: Remove password from the output
+  // user.password = undefined;
 
   res.status(statusCode).json({
     status: 'success',
@@ -35,8 +35,9 @@ const createSendToken = (user, statusCode, res) => {
 };
 
 exports.signup = catchAsync(async (req, res, next) => {
+  console.log(req.body);
   const newUser = await User.create({
-    name: req.body.name,
+    username: req.body.username,
     email: req.body.email,
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm,

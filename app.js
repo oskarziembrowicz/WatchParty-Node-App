@@ -1,6 +1,8 @@
 const express = require('express');
+const morgan = require('morgan');
 const partyRouter = require('./routes/partyRouter');
 const movieRouter = require('./routes/movieRouter');
+const userRouter = require('./routes/userRouter');
 const globalErrorHanler = require('./controllers/errorController');
 
 const app = express();
@@ -52,6 +54,7 @@ app.use(express.json({ limit: '10kb' }));
 
 // Test middleware
 app.use((req, res, next) => {
+  // @ts-ignore - Adding custom property to Express Request
   req.requestTime = new Date().toISOString();
   // console.log(req.headers);
   next();
@@ -60,6 +63,7 @@ app.use((req, res, next) => {
 // 2. ROUTES
 app.use('/api/v1/parties', partyRouter);
 app.use('/api/v1/movies', movieRouter);
+app.use('/api/v1/users', userRouter);
 
 app.use(globalErrorHanler);
 
