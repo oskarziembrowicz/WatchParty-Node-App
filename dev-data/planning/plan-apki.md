@@ -28,5 +28,5 @@
   - [ ] Add user as friend
   - [ ] Remove user from friends
 - [ ] Movie endpoints:
-  - [ ] Find movie
-  - [ ] Get movie by id
+  - [x] Find movie
+  - [x] Get movie by id
