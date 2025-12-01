@@ -10,6 +10,16 @@ router.post('/login', authController.login);
 
 router.use(authController.protect);
 
+router.route('/me').get(userController.getMyData);
+// router.route('/me').patch(userController.updateMe);
+// router.route('/me').delete(userController.deleteMe);
+
+router.route('/').get(userController.getAllUsers);
+//   .post(userController.createUser);
+router.route('/:id').get(userController.getUser);
+//   .patch(userController.updateUser)
+//   .delete(userController.deleteUser);
+
 // router.post("/forgotPassword", authController.forgotPassword);
 // router.patch("/resetPassword/:token", authController.resetPassword);
 
@@ -18,14 +28,5 @@ router.use(authController.protect);
 //   authController.protect,
 //   authController.updatePassword,
 // );
-
-// router.patch("/updateMe", authController.protect, userController.updateMe);
-// router.delete("/deleteMe", authController.protect, userController.deleteMe);
-
-router.route('/').get(userController.getAllUsers);
-//   .post(userController.createUser);
-router.route('/:id').get(userController.getUser);
-//   .patch(userController.updateUser)
-//   .delete(userController.deleteUser);
 
 module.exports = router;

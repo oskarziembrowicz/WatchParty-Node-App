@@ -19,8 +19,8 @@
   - [x] Login
   - [ ] Logout
   - [ ] Get my data
-  - [ ] Get user by id
-  - [ ] Get all users
+  - [x] Get user by id
+  - [x] Get all users
   - [ ] Get parties
   - [ ] Get hosted parties
   - [ ] Add favorite movie
