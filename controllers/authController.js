@@ -79,7 +79,14 @@ exports.login = catchAsync(async (req, res, next) => {
 exports.protect = catchAsync(async (req, res, next) => {
   // 1. Get token and check if it exists
   let token;
-  if (
+
+  // 1. Try to get token from cookies first
+  console.log(req);
+  if (req.cookies && req.cookies.jwt) {
+    token = req.cookies.jwt;
+  }
+  // 2. If no token in cookie, check for Bearer token in headers
+  else if (
     req.headers.authorization &&
     req.headers.authorization.startsWith('Bearer')
   ) {

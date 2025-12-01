@@ -1,5 +1,6 @@
 const express = require('express');
 const morgan = require('morgan');
+const cookieParser = require('cookie-parser');
 const partyRouter = require('./routes/partyRouter');
 const movieRouter = require('./routes/movieRouter');
 const userRouter = require('./routes/userRouter');
@@ -51,6 +52,9 @@ if (process.env.NODE_ENV === 'development') {
 
 // Body parser, reading data from body into req.body
 app.use(express.json({ limit: '10kb' }));
+
+// Cookie parser
+app.use(cookieParser());
 
 // Test middleware
 app.use((req, res, next) => {
