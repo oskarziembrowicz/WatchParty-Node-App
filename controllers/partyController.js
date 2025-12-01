@@ -29,6 +29,8 @@ exports.getParty = catchAsync(async (req, res, next) => {
 });
 
 exports.createParty = catchAsync(async (req, res, next) => {
+  console.log(req.user);
+
   const party = {
     name: req.body.name,
     description: req.body.description,
