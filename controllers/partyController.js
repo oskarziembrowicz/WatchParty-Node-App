@@ -28,6 +28,27 @@ exports.getParty = catchAsync(async (req, res, next) => {
   });
 });
 
+exports.createParty = catchAsync(async (req, res, next) => {
+  const party = {
+    name: req.body.name,
+    description: req.body.description,
+    startDate: req.body.startDate,
+    isOnline: req.body.isOnline,
+    joinLink: req.body.joinLink,
+    address: req.body.address,
+    movies: req.body.movies,
+    authorId: req.user.id,
+  };
+  const newParty = await Party.create(party);
+
+  res.status(201).json({
+    status: 'success',
+    data: {
+      party: newParty,
+    },
+  });
+});
+
 exports.addMovie = catchAsync(async (req, res, next) => {
   const party = await Party.findById(req.params.id);
 

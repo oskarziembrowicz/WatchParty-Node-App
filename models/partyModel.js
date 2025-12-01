@@ -25,7 +25,7 @@ const partySchema = new mongoose.Schema({
     default: Date.now,
     select: false,
   },
-  //   authorId: mongoose.Types.ObjectId,
+  authorId: mongoose.Types.ObjectId,
   //   status: {
   //     type: PartyStatus,
   //     default: PartyStatus.Expected,
