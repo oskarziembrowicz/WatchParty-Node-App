@@ -10,7 +10,10 @@ router
   .route('/')
   .get(partyController.getAllParties)
   .post(partyController.createParty);
-router.route('/:id').get(partyController.getParty);
+router
+  .route('/:id')
+  .get(partyController.getParty)
+  .patch(partyController.updateParty);
 router.route('/:id/movies').patch(partyController.addMovie);
 router.route('/:id/movies/:movieId').delete(partyController.removeMovie);
 router.route('/:id/participants').patch(partyController.addParticipant);

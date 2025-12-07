@@ -154,3 +154,31 @@ exports.removeParticipant = catchAsync(async (req, res, next) => {
     },
   });
 });
+
+exports.updateParty = catchAsync(async (req, res, next) => {
+  const party = await Party.findById(req.params.id);
+
+  if (!party) {
+    return next(new AppError('No party found with that ID', 404));
+  }
+
+  // Loop through each field in req.body and update corresponding property in party object
+  Object.keys(req.body).forEach((key) => {
+    // Avoid updating restricted fields like _id (optional: adjust as needed)
+    if (key !== '_id') {
+      party[key] = req.body[key];
+    }
+  });
+
+  const updatedParty = await Party.findByIdAndUpdate(req.params.id, party, {
+    new: true,
+    runValidators: true,
+  });
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      updatedParty,
+    },
+  });
+});
