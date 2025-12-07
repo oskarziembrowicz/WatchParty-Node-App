@@ -81,7 +81,7 @@ exports.protect = catchAsync(async (req, res, next) => {
   let token;
 
   // 1. Try to get token from cookies first
-  console.log(req);
+  // console.log(req);
   if (req.cookies && req.cookies.jwt) {
     token = req.cookies.jwt;
   }

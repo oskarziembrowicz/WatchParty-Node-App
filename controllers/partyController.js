@@ -29,8 +29,6 @@ exports.getParty = catchAsync(async (req, res, next) => {
 });
 
 exports.createParty = catchAsync(async (req, res, next) => {
-  console.log(req.user);
-
   const party = {
     name: req.body.name,
     description: req.body.description,
@@ -94,6 +92,62 @@ exports.removeMovie = catchAsync(async (req, res, next) => {
   });
 
   res.status(204).json({
+    status: 'success',
+    data: {
+      updatedParty,
+    },
+  });
+});
+
+exports.addParticipant = catchAsync(async (req, res, next) => {
+  const party = await Party.findById(req.params.id);
+
+  if (!party) {
+    return next(new AppError('No party found with that ID', 404));
+  }
+
+  const { userId } = req.body;
+  if (!userId) {
+    return next(new AppError('User ID is required', 400));
+  }
+
+  if (!party.participants.includes(userId)) {
+    party.participants.push(userId);
+  }
+  const updatedParty = await Party.findByIdAndUpdate(req.params.id, party, {
+    new: true,
+  });
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      updatedParty,
+    },
+  });
+});
+
+exports.removeParticipant = catchAsync(async (req, res, next) => {
+  const party = await Party.findById(req.params.id);
+
+  if (!party) {
+    return next(new AppError('No party found with that ID', 404));
+  }
+
+  const { userId } = req.params;
+  if (!userId) {
+    return next(new AppError('User ID is required', 400));
+  }
+
+  if (!party.participants.includes(userId)) {
+    return next(new AppError('User not found in party', 404));
+  }
+
+  party.participants.pull(userId);
+  const updatedParty = await Party.findByIdAndUpdate(req.params.id, party, {
+    new: true,
+  });
+
+  res.status(200).json({
     status: 'success',
     data: {
       updatedParty,

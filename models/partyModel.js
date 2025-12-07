@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const partySchema = new mongoose.Schema({
   name: {
     type: String,
-    // required: [true, 'A party must have a name'],
+    required: [true, 'A party must have a name'],
   },
   description: String,
   startDate: {
@@ -17,7 +17,11 @@ const partySchema = new mongoose.Schema({
   joinLink: String,
   address: String,
   movies: [String],
-  //   participants: [mongoose.Types.ObjectId],
+  participants: {
+    type: [mongoose.Types.ObjectId],
+    ref: 'User',
+    default: [],
+  },
   // usefulLinks: [String],
   // sharedFiles: [File],
   creationDate: {
@@ -25,7 +29,10 @@ const partySchema = new mongoose.Schema({
     default: Date.now,
     select: false,
   },
-  authorId: mongoose.Types.ObjectId,
+  authorId: {
+    type: mongoose.Types.ObjectId,
+    ref: 'User',
+  },
   //   status: {
   //     type: PartyStatus,
   //     default: PartyStatus.Expected,
