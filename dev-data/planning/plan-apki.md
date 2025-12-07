@@ -12,8 +12,8 @@
   - [x] Get all parties
   - [x] Add movie
   - [x] Remove movie
-  - [ ] Add participant
-  - [ ] Remove participant
+  - [x] Add participant
+  - [x] Remove participant
   - [ ] Update party
 - [ ] User endpoints:
   - [x] Register
@@ -28,6 +28,6 @@
   - [ ] Remove movie from favorites
   - [ ] Add user as friend
   - [ ] Remove user from friends
-- [ ] Movie endpoints:
+- [x] Movie endpoints:
   - [x] Find movie
   - [x] Get movie by id
