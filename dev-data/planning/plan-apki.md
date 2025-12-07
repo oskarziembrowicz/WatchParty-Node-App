@@ -14,11 +14,11 @@
   - [x] Remove movie
   - [x] Add participant
   - [x] Remove participant
-  - [ ] Update party
+  - [x] Update party
 - [ ] User endpoints:
   - [x] Register
   - [x] Login
-  - [ ] Logout
+  - [x] Logout
   - [ ] Get my data
   - [x] Get user by id
   - [x] Get all users
