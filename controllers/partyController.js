@@ -1,6 +1,7 @@
 const catchAsync = require('../utils/catchAsync');
 const Party = require('../models/partyModel');
 const AppError = require('../utils/appError');
+const User = require('../models/userModel');
 
 exports.getAllParties = catchAsync(async (req, res, next) => {
   const parties = await Party.find();
@@ -38,8 +39,17 @@ exports.createParty = catchAsync(async (req, res, next) => {
     address: req.body.address,
     movies: req.body.movies,
     authorId: req.user.id,
+    participants: [req.user.id],
   };
   const newParty = await Party.create(party);
+
+  const user = await User.findById(req.user.id);
+  if (!user) {
+    return next(new AppError('User not found', 404));
+  }
+  // Add party to user parties
+  user.parties.push(newParty._id);
+  await user.save();
 
   res.status(201).json({
     status: 'success',
@@ -111,12 +121,22 @@ exports.addParticipant = catchAsync(async (req, res, next) => {
     return next(new AppError('User ID is required', 400));
   }
 
+  const user = await User.findById(userId);
+  if (!user) {
+    return next(new AppError('User not found', 404));
+  }
+
   if (!party.participants.includes(userId)) {
     party.participants.push(userId);
   }
+  // Add user to party participants
   const updatedParty = await Party.findByIdAndUpdate(req.params.id, party, {
     new: true,
   });
+
+  // Add party to user parties
+  user.parties.push(party._id);
+  await user.save();
 
   res.status(200).json({
     status: 'success',
@@ -138,14 +158,24 @@ exports.removeParticipant = catchAsync(async (req, res, next) => {
     return next(new AppError('User ID is required', 400));
   }
 
+  const user = await User.findById(userId);
+  if (!user) {
+    return next(new AppError('User not found', 404));
+  }
+
   if (!party.participants.includes(userId)) {
     return next(new AppError('User not found in party', 404));
   }
 
+  // Remove user from party participants
   party.participants.pull(userId);
   const updatedParty = await Party.findByIdAndUpdate(req.params.id, party, {
     new: true,
   });
+
+  // Remove party from user parties
+  user.parties.pull(party._id);
+  await user.save();
 
   res.status(200).json({
     status: 'success',

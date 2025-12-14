@@ -19,7 +19,7 @@
   - [x] Register
   - [x] Login
   - [x] Logout
-  - [ ] Get my data
+  - [x] Get my data
   - [x] Get user by id
   - [x] Get all users
   - [ ] Get parties

@@ -31,17 +31,17 @@ const userSchema = new mongoose.Schema(
       default: [],
     },
     friends: {
-      type: [mongoose.Schema.Types.ObjectId],
+      type: [mongoose.Types.ObjectId],
       ref: 'User',
       default: [],
     },
     parties: {
-      type: [mongoose.Schema.Types.ObjectId],
+      type: [mongoose.Types.ObjectId],
       ref: 'Party',
       default: [],
     },
     archivedParties: {
-      type: [mongoose.Schema.Types.ObjectId],
+      type: [mongoose.Types.ObjectId],
       ref: 'Party',
       default: [],
     },
