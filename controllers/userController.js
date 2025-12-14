@@ -109,7 +109,32 @@ exports.saveMovie = catchAsync(async (req, res, next) => {
   if (!user.savedMovies.includes(movieId)) {
     user.savedMovies.push(movieId);
   }
-  // Add user to party participants
+  const updatedUser = await User.findByIdAndUpdate(req.user.id, user, {
+    new: true,
+  });
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      updatedUser,
+    },
+  });
+});
+
+exports.removeMovie = catchAsync(async (req, res, next) => {
+  const user = await User.findById(req.user.id);
+
+  if (!user) {
+    return next(new AppError('No user found with that ID', 404));
+  }
+
+  const movieId = req.params.id;
+
+  // Remove movie from savedMovies
+  if (!user.savedMovies.includes(movieId)) {
+    return next(new AppError('That movie is not saved by this user', 404));
+  }
+  user.savedMovies = user.savedMovies.filter((movie) => movie !== movieId);
   const updatedUser = await User.findByIdAndUpdate(req.user.id, user, {
     new: true,
   });

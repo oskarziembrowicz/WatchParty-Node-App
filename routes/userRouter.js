@@ -18,6 +18,7 @@ router.route('/me').get(userController.getMyData);
 router.route('/me/parties').get(userController.getMyParties);
 router.route('/me/hosted-parties').get(userController.getMyHostedParties);
 router.route('/me/movies').put(userController.saveMovie);
+router.route('/me/movies/:id').delete(userController.removeMovie);
 
 router.route('/').get(userController.getAllUsers);
 //   .post(userController.createUser);
