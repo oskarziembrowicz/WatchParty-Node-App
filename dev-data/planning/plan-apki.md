@@ -22,7 +22,7 @@
   - [x] Get my data
   - [x] Get user by id
   - [x] Get all users
-  - [ ] Get parties
+  - [ ] Get user parties
   - [ ] Get hosted parties
   - [ ] Add favorite movie
   - [ ] Remove movie from favorites
