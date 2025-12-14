@@ -1,4 +1,5 @@
 const User = require('../models/userModel');
+const Party = require('../models/partyModel');
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
 
@@ -65,6 +66,28 @@ exports.getMyParties = catchAsync(async (req, res, next) => {
     status: 'success',
     data: {
       parties,
+    },
+  });
+});
+
+exports.getMyHostedParties = catchAsync(async (req, res, next) => {
+  const hostedParties = await Party.find({ authorId: req.user.id });
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      hostedParties,
+    },
+  });
+});
+
+exports.getHostedParties = catchAsync(async (req, res, next) => {
+  const hostedParties = await Party.find({ authorId: req.params.id });
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      hostedParties,
     },
   });
 });

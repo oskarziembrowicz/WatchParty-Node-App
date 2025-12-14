@@ -22,8 +22,8 @@
   - [x] Get my data
   - [x] Get user by id
   - [x] Get all users
-  - [ ] Get user parties
-  - [ ] Get hosted parties
+  - [x] Get user parties
+  - [x] Get hosted parties
   - [ ] Add favorite movie
   - [ ] Remove movie from favorites
   - [ ] Add user as friend

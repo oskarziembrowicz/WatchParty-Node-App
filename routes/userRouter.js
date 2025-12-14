@@ -16,12 +16,14 @@ router.route('/me').get(userController.getMyData);
 // router.route('/me').patch(userController.updateMe);
 // router.route('/me').delete(userController.deleteMe);
 router.route('/me/parties').get(userController.getMyParties);
+router.route('/me/hosted-parties').get(userController.getMyHostedParties);
 
 router.route('/').get(userController.getAllUsers);
 //   .post(userController.createUser);
 router.route('/:id').get(userController.getUser);
 //   .patch(userController.updateUser)
 //   .delete(userController.deleteUser);
+router.route('/:id/hosted-parties').get(userController.getHostedParties);
 
 router.route('/:id/parties').get(userController.getUserParties);
 
