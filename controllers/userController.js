@@ -172,3 +172,37 @@ exports.addFriend = catchAsync(async (req, res, next) => {
     },
   });
 });
+
+exports.removeFriend = catchAsync(async (req, res, next) => {
+  const user = await User.findById(req.user.id);
+  if (!user) {
+    return next(new AppError('No user found with that ID', 404));
+  }
+
+  const friendId = req.params.id;
+
+  const unfriendedUser = await User.findById(friendId);
+  if (!unfriendedUser) {
+    return next(new AppError('No user found with that friend ID', 404));
+  }
+
+  // Remove user from friends
+  if (!user.friends.includes(friendId)) {
+    return next(new AppError('That user is not on friends list', 404));
+  }
+  user.friends.pull(friendId);
+  const updatedUser = await User.findByIdAndUpdate(req.user.id, user, {
+    new: true,
+  });
+
+  // Remove this user from another users friends
+  unfriendedUser.friends.pull(req.user.id);
+  await User.findByIdAndUpdate(friendId, unfriendedUser);
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      updatedUser,
+    },
+  });
+});

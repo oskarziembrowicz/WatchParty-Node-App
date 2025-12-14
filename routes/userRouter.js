@@ -20,6 +20,7 @@ router.route('/me/hosted-parties').get(userController.getMyHostedParties);
 router.route('/me/movies').put(userController.saveMovie);
 router.route('/me/movies/:id').delete(userController.removeMovie);
 router.route('/me/friends').put(userController.addFriend);
+router.route('/me/friends/:id').delete(userController.removeFriend);
 
 router.route('/').get(userController.getAllUsers);
 //   .post(userController.createUser);

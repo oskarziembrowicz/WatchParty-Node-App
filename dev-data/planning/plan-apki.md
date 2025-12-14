@@ -29,7 +29,7 @@
   - [x] Add favorite movie
   - [x] Remove movie from favorites
   - [x] Add user as friend
-  - [ ] Remove user from friends
+  - [x] Remove user from friends
   - [ ] Edit user data
   - [ ] Delete user
 - [x] Movie endpoints:
