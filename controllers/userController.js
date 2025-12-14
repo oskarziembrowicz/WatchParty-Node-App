@@ -146,3 +146,29 @@ exports.removeMovie = catchAsync(async (req, res, next) => {
     },
   });
 });
+
+exports.addFriend = catchAsync(async (req, res, next) => {
+  const user = await User.findById(req.user.id);
+
+  if (!user) {
+    return next(new AppError('No user found with that ID', 404));
+  }
+
+  const { friendId } = req.body;
+
+  // Add user to friends list
+  if (user.friends.includes(friendId)) {
+    return next(new AppError('That user is already your friend', 401));
+  }
+  user.friends.push(friendId);
+  const updatedUser = await User.findByIdAndUpdate(req.user.id, user, {
+    new: true,
+  });
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      updatedUser,
+    },
+  });
+});

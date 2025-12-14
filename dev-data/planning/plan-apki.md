@@ -27,8 +27,8 @@
   - [x] Get user parties
   - [x] Get hosted parties
   - [x] Add favorite movie
-  - [ ] Remove movie from favorites
-  - [ ] Add user as friend
+  - [x] Remove movie from favorites
+  - [x] Add user as friend
   - [ ] Remove user from friends
   - [ ] Edit user data
   - [ ] Delete user
