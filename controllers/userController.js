@@ -63,6 +63,51 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   });
 });
 
+exports.updateUser = catchAsync(async (req, res, next) => {
+  const userId = req.params.id;
+  const { username, email } = req.body;
+
+  const updatedUser = await User.findByIdAndUpdate(
+    userId,
+    { username, email },
+    { new: true },
+  );
+
+  if (!updatedUser) {
+    return next(new AppError('User not found', 404));
+  }
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      updatedUser,
+    },
+  });
+});
+
+exports.deleteMe = catchAsync(async (req, res, next) => {
+  await User.findByIdAndDelete(req.user.id);
+
+  res.clearCookie('jwt');
+
+  res.status(204).json({
+    status: 'success',
+    data: {},
+  });
+});
+
+exports.deleteUser = catchAsync(async (req, res, next) => {
+  await User.findByIdAndDelete(req.params.id);
+
+  // If deleting myself
+  if (req.user.id === req.params.id) res.clearCookie('jwt');
+
+  res.status(204).json({
+    status: 'success',
+    data: {},
+  });
+});
+
 exports.getUserParties = catchAsync(async (req, res, next) => {
   const user = await User.findById(req.params.id).populate('parties');
   if (!user) {

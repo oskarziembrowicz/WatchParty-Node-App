@@ -15,8 +15,8 @@ router.get('/logout', authController.logout);
 router
   .route('/me')
   .get(userController.getMyData)
-  .patch(userController.updateMe);
-// router.route('/me').delete(userController.deleteMe);
+  .patch(userController.updateMe)
+  .delete(userController.deleteMe);
 router.route('/me/parties').get(userController.getMyParties);
 router.route('/me/hosted-parties').get(userController.getMyHostedParties);
 router.route('/me/movies').put(userController.saveMovie);
@@ -26,9 +26,12 @@ router.route('/me/friends/:id').delete(userController.removeFriend);
 
 router.route('/').get(userController.getAllUsers);
 //   .post(userController.createUser);
-router.route('/:id').get(userController.getUser);
-//   .patch(userController.updateUser)
-//   .delete(userController.deleteUser);
+router
+  .route('/:id')
+  .get(userController.getUser)
+  .patch(userController.updateUser)
+  .delete(userController.deleteUser);
+
 router.route('/:id/hosted-parties').get(userController.getHostedParties);
 
 router.route('/:id/parties').get(userController.getUserParties);

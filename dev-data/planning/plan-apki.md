@@ -30,8 +30,9 @@
   - [x] Remove movie from favorites
   - [x] Add user as friend
   - [x] Remove user from friends
-  - [ ] Edit user data
-  - [ ] Delete user
+  - [x] Edit user data
+  - [x] Delete user
 - [x] Movie endpoints:
   - [x] Find movie
   - [x] Get movie by id
+- [ ] Restrict paths
