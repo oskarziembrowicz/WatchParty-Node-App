@@ -44,6 +44,25 @@ exports.getMyData = catchAsync(async (req, res, next) => {
   });
 });
 
+exports.updateMe = catchAsync(async (req, res, next) => {
+  const { username, email } = req.body;
+  const updatedUser = await User.findByIdAndUpdate(
+    req.user.id,
+    {
+      username,
+      email,
+    },
+    { new: true },
+  );
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      updatedUser,
+    },
+  });
+});
+
 exports.getUserParties = catchAsync(async (req, res, next) => {
   const user = await User.findById(req.params.id).populate('parties');
   if (!user) {

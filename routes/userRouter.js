@@ -12,8 +12,10 @@ router.use(authController.protect);
 
 router.get('/logout', authController.logout);
 
-router.route('/me').get(userController.getMyData);
-// router.route('/me').patch(userController.updateMe);
+router
+  .route('/me')
+  .get(userController.getMyData)
+  .patch(userController.updateMe);
 // router.route('/me').delete(userController.deleteMe);
 router.route('/me/parties').get(userController.getMyParties);
 router.route('/me/hosted-parties').get(userController.getMyHostedParties);
