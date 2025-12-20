@@ -219,3 +219,12 @@ exports.updateParty = catchAsync(async (req, res, next) => {
     },
   });
 });
+
+exports.deleteParty = catchAsync(async (req, res, next) => {
+  await Party.findByIdAndDelete(req.params.id);
+
+  res.status(204).json({
+    status: 'success',
+    data: null,
+  });
+});

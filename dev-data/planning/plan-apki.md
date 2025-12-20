@@ -16,7 +16,7 @@
   - [x] Remove participant
   - [x] Update party
   - [x] Edit party
-  - [ ] Delete party
+  - [x] Delete party
 - [x] User endpoints:
   - [x] Register
   - [x] Login
