@@ -17,7 +17,7 @@
   - [x] Update party
   - [ ] Edit party
   - [ ] Delete party
-- [ ] User endpoints:
+- [x] User endpoints:
   - [x] Register
   - [x] Login
   - [x] Logout
