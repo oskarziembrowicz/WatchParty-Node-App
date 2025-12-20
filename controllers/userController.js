@@ -45,15 +45,18 @@ exports.getMyData = catchAsync(async (req, res, next) => {
 });
 
 exports.updateMe = catchAsync(async (req, res, next) => {
-  const { username, email } = req.body;
-  const updatedUser = await User.findByIdAndUpdate(
-    req.user.id,
-    {
-      username,
-      email,
-    },
-    { new: true },
-  );
+  // Only allow updating "username" and "email"
+  const allowedFields = ['username', 'email'];
+  const updates = {};
+  allowedFields.forEach((field) => {
+    if (req.body[field] !== undefined) {
+      updates[field] = req.body[field];
+    }
+  });
+
+  const updatedUser = await User.findByIdAndUpdate(req.user.id, updates, {
+    new: true,
+  });
 
   res.status(200).json({
     status: 'success',
@@ -65,13 +68,18 @@ exports.updateMe = catchAsync(async (req, res, next) => {
 
 exports.updateUser = catchAsync(async (req, res, next) => {
   const userId = req.params.id;
-  const { username, email } = req.body;
+  // Only allow updating "username" and "email"
+  const allowedFields = ['username', 'email'];
+  const updates = {};
+  allowedFields.forEach((field) => {
+    if (req.body[field] !== undefined) {
+      updates[field] = req.body[field];
+    }
+  });
 
-  const updatedUser = await User.findByIdAndUpdate(
-    userId,
-    { username, email },
-    { new: true },
-  );
+  const updatedUser = await User.findByIdAndUpdate(userId, updates, {
+    new: true,
+  });
 
   if (!updatedUser) {
     return next(new AppError('User not found', 404));
