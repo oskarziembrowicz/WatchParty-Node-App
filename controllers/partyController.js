@@ -186,17 +186,24 @@ exports.removeParticipant = catchAsync(async (req, res, next) => {
 });
 
 exports.updateParty = catchAsync(async (req, res, next) => {
+  const allowedFields = [
+    'name',
+    'description',
+    'startDate',
+    'isOnline',
+    'joinLink',
+  ];
+
   const party = await Party.findById(req.params.id);
 
   if (!party) {
     return next(new AppError('No party found with that ID', 404));
   }
 
-  // Loop through each field in req.body and update corresponding property in party object
-  Object.keys(req.body).forEach((key) => {
-    // Avoid updating restricted fields like _id (optional: adjust as needed)
-    if (key !== '_id') {
-      party[key] = req.body[key];
+  // Only update allowed fields
+  allowedFields.forEach((field) => {
+    if (req.body[field] !== undefined) {
+      party[field] = req.body[field];
     }
   });
 
