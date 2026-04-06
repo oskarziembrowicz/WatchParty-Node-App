@@ -248,6 +248,32 @@ exports.endParty = catchAsync(async (req, res, next) => {
   });
 });
 
+exports.addUsefulLink = catchAsync(async (req, res, next) => {
+  const party = await Party.findById(req.params.id);
+
+  if (!party) {
+    return next(new AppError('No party found with that ID', 404));
+  }
+
+  const { link } = req.body;
+  if (!link) {
+    return next(new AppError('Link is required', 400));
+  }
+
+  party.usefulLinks.push(link);
+  const updatedParty = await Party.findByIdAndUpdate(req.params.id, party, {
+    new: true,
+    runValidators: true,
+  });
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      updatedParty,
+    },
+  });
+});
+
 // IMPRESSIONS
 exports.getPartyImpressions = catchAsync(async (req, res, next) => {
   const party = await Party.findById(req.params.id);

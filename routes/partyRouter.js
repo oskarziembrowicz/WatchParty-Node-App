@@ -16,6 +16,7 @@ router
   .patch(partyController.updateParty)
   .delete(partyController.deleteParty);
 router.route('/:id/end').patch(partyController.endParty);
+router.route('/:id/links').patch(partyController.addUsefulLink);
 router.route('/:id/movies').patch(partyController.addMovie);
 router.route('/:id/movies/:movieId').delete(partyController.removeMovie);
 router.route('/:id/participants').patch(partyController.addParticipant);

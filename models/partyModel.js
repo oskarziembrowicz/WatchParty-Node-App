@@ -40,7 +40,7 @@ const partySchema = new mongoose.Schema({
     ref: 'User',
     default: [],
   },
-  // usefulLinks: [String],
+  usefulLinks: [String],
   // sharedFiles: [File],
   creationDate: {
     type: Date,
