@@ -1,6 +1,23 @@
 const mongoose = require('mongoose');
 const PartyStatus = require('../types/partyStatus');
 
+const PartyImpression = new mongoose.Schema({
+  userId: {
+    type: mongoose.Types.ObjectId,
+    ref: 'User',
+  },
+  impression: String,
+});
+
+const MovieImpression = new mongoose.Schema({
+  movieId: String,
+  userId: {
+    type: mongoose.Types.ObjectId,
+    ref: 'User',
+  },
+  impression: String,
+});
+
 const partySchema = new mongoose.Schema({
   name: {
     type: String,
@@ -39,8 +56,8 @@ const partySchema = new mongoose.Schema({
     enum: Object.values(PartyStatus),
     default: PartyStatus.Expected,
   },
-  //   partyImpressions: [PartyImpression],
-  //   movieImpressions: [MovieImpression],
+  partyImpressions: [PartyImpression],
+  movieImpressions: [MovieImpression],
 });
 
 const Party = mongoose.model('Party', partySchema);
