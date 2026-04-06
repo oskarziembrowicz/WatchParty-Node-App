@@ -43,14 +43,6 @@ exports.createParty = catchAsync(async (req, res, next) => {
   };
   const newParty = await Party.create(party);
 
-  const user = await User.findById(req.user.id);
-  if (!user) {
-    return next(new AppError('User not found', 404));
-  }
-  // Add party to user parties
-  user.parties.push(newParty._id);
-  await user.save();
-
   res.status(201).json({
     status: 'success',
     data: {
@@ -134,10 +126,6 @@ exports.addParticipant = catchAsync(async (req, res, next) => {
     new: true,
   });
 
-  // Add party to user parties
-  user.parties.push(party._id);
-  await user.save();
-
   res.status(200).json({
     status: 'success',
     data: {
@@ -158,11 +146,6 @@ exports.removeParticipant = catchAsync(async (req, res, next) => {
     return next(new AppError('User ID is required', 400));
   }
 
-  const user = await User.findById(userId);
-  if (!user) {
-    return next(new AppError('User not found', 404));
-  }
-
   if (!party.participants.includes(userId)) {
     return next(new AppError('User not found in party', 404));
   }
@@ -172,10 +155,6 @@ exports.removeParticipant = catchAsync(async (req, res, next) => {
   const updatedParty = await Party.findByIdAndUpdate(req.params.id, party, {
     new: true,
   });
-
-  // Remove party from user parties
-  user.parties.pull(party._id);
-  await user.save();
 
   res.status(200).json({
     status: 'success',

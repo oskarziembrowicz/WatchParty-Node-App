@@ -35,16 +35,6 @@ const userSchema = new mongoose.Schema(
       ref: 'User',
       default: [],
     },
-    parties: {
-      type: [mongoose.Types.ObjectId],
-      ref: 'Party',
-      default: [],
-    },
-    archivedParties: {
-      type: [mongoose.Types.ObjectId],
-      ref: 'Party',
-      default: [],
-    },
   },
   {
     timestamps: true, // Adds createdAt and updatedAt automatically

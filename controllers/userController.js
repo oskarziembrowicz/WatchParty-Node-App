@@ -117,11 +117,7 @@ exports.deleteUser = catchAsync(async (req, res, next) => {
 });
 
 exports.getUserParties = catchAsync(async (req, res, next) => {
-  const user = await User.findById(req.params.id).populate('parties');
-  if (!user) {
-    return next(new AppError('User not found', 404));
-  }
-  const { parties } = user;
+  const parties = await Party.find({ participants: req.params.id });
 
   res.status(200).json({
     status: 'success',
@@ -132,11 +128,7 @@ exports.getUserParties = catchAsync(async (req, res, next) => {
 });
 
 exports.getMyParties = catchAsync(async (req, res, next) => {
-  const user = await User.findById(req.user.id).populate('parties');
-  if (!user) {
-    return next(new AppError('User not found', 404));
-  }
-  const { parties } = user;
+  const parties = await Party.find({ participants: req.user.id });
 
   res.status(200).json({
     status: 'success',
@@ -153,6 +145,20 @@ exports.getMyHostedParties = catchAsync(async (req, res, next) => {
     status: 'success',
     data: {
       hostedParties,
+    },
+  });
+});
+
+exports.getMyArchivedParties = catchAsync(async (req, res, next) => {
+  const archivedParties = await Party.find({
+    participants: req.user.id,
+    status: 'archived',
+  });
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      archivedParties,
     },
   });
 });
