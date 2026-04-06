@@ -4,6 +4,9 @@ const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
 
 exports.getAllUsers = catchAsync(async (req, res, next) => {
+  // SECURITY NOTE: This returns every user in the database, including their plaintext passwords
+  //                and all personal data. In production, restrict to admin role, apply field
+  //                projection to exclude sensitive fields, and add pagination.
   const users = await User.find();
 
   res.status(200).json({
@@ -15,6 +18,9 @@ exports.getAllUsers = catchAsync(async (req, res, next) => {
 });
 
 exports.getUser = catchAsync(async (req, res, next) => {
+  // SECURITY NOTE: Any authenticated user can look up any other user by ID (IDOR).
+  //                In production, restrict to the user themselves or an admin,
+  //                and exclude sensitive fields like password from the projection.
   const user = await User.findById(req.params.id);
 
   if (!user) {
@@ -68,7 +74,8 @@ exports.updateMe = catchAsync(async (req, res, next) => {
 
 exports.updateUser = catchAsync(async (req, res, next) => {
   const userId = req.params.id;
-  // Only allow updating "username" and "email"
+  // SECURITY NOTE: Any authenticated user can update any other user's data (IDOR / broken access control).
+  //                In production, restrict this endpoint to admins, or verify req.user.id === userId.
   const allowedFields = ['username', 'email'];
   const updates = {};
   allowedFields.forEach((field) => {
@@ -94,6 +101,8 @@ exports.updateUser = catchAsync(async (req, res, next) => {
 });
 
 exports.deleteMe = catchAsync(async (req, res, next) => {
+  // SECURITY NOTE: In production, consider soft-deleting (setting an `active: false` flag)
+  //                instead of hard-deleting, so cascading cleanup (parties, friends lists) can be handled.
   await User.findByIdAndDelete(req.user.id);
 
   res.clearCookie('jwt');
@@ -105,6 +114,8 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
 });
 
 exports.deleteUser = catchAsync(async (req, res, next) => {
+  // SECURITY NOTE: Any authenticated user can delete any other user (IDOR / broken access control).
+  //                In production, restrict this endpoint to admins only.
   await User.findByIdAndDelete(req.params.id);
 
   // If deleting myself
@@ -234,6 +245,10 @@ exports.addFriend = catchAsync(async (req, res, next) => {
 
   const { friendId } = req.body;
 
+  // SECURITY NOTE: There is no check that `friendId` refers to an existing user; an invalid ObjectId
+  //                would silently be stored. In production, verify the friend exists before adding.
+  // SECURITY NOTE: Friend relationships are one-directional here. In production, consider requiring
+  //                mutual consent (friend request / accept pattern) to prevent harassment.
   // Add user to friends list
   if (user.friends.includes(friendId)) {
     return next(new AppError('That user is already your friend', 401));

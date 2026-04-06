@@ -43,6 +43,10 @@ app.use(
   }),
 );
 
+// SECURITY NOTE: Configure CORS to restrict which origins can access this API.
+//                Without it, any website can make cross-origin requests on behalf of a logged-in user.
+// app.use(cors({ origin: process.env.ALLOWED_ORIGIN, credentials: true }));
+
 */
 
 // Development logging
@@ -51,9 +55,12 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 // Body parser, reading data from body into req.body
+// SECURITY NOTE: This limit only applies to JSON bodies; multipart/form-data (file uploads) is not capped here.
+//                In production, also set limits inside multer (see utils/upload.js).
 app.use(express.json({ limit: '10kb' }));
 
 // Cookie parser
+// SECURITY NOTE: Without signed cookies (cookieParser(secret)), cookie values can be tampered with by the client.
 app.use(cookieParser());
 
 // Test middleware

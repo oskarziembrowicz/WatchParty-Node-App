@@ -10,6 +10,9 @@ const User = require('../models/userModel');
 const upload = require('../utils/upload');
 
 exports.getAllParties = catchAsync(async (req, res, next) => {
+  // SECURITY NOTE: Returns every party in the database to any authenticated user.
+  //                In production, filter by participant/author to avoid leaking private parties,
+  //                and add pagination to prevent large data dumps.
   const parties = await Party.find();
 
   res.status(200).json({
@@ -36,6 +39,8 @@ exports.getParty = catchAsync(async (req, res, next) => {
 });
 
 exports.createParty = catchAsync(async (req, res, next) => {
+  // SECURITY NOTE: `joinLink` is stored as-is with no validation. In production, validate that it
+  //                is a real URL and does not point to internal network addresses (SSRF prevention).
   const party = {
     name: req.body.name,
     description: req.body.description,
@@ -58,6 +63,8 @@ exports.createParty = catchAsync(async (req, res, next) => {
 });
 
 exports.addMovie = catchAsync(async (req, res, next) => {
+  // SECURITY NOTE: No authorization check -- any authenticated user can add movies to any party (IDOR).
+  //                In production, verify req.user is the party author or a participant.
   const party = await Party.findById(req.params.id);
 
   if (!party) {
@@ -81,6 +88,8 @@ exports.addMovie = catchAsync(async (req, res, next) => {
 });
 
 exports.removeMovie = catchAsync(async (req, res, next) => {
+  // SECURITY NOTE: No authorization check -- any authenticated user can remove movies from any party (IDOR).
+  //                In production, verify req.user is the party author or a participant.
   const partyId = req.params.id;
   const { movieId } = req.params;
   const party = await Party.findById(partyId);
@@ -108,6 +117,8 @@ exports.removeMovie = catchAsync(async (req, res, next) => {
 });
 
 exports.addParticipant = catchAsync(async (req, res, next) => {
+  // SECURITY NOTE: No authorization check -- any authenticated user can add anyone to any party (IDOR).
+  //                In production, restrict to the party author or implement an invite/accept flow.
   const party = await Party.findById(req.params.id);
 
   if (!party) {
@@ -141,6 +152,8 @@ exports.addParticipant = catchAsync(async (req, res, next) => {
 });
 
 exports.removeParticipant = catchAsync(async (req, res, next) => {
+  // SECURITY NOTE: No authorization check -- any authenticated user can remove anyone from any party (IDOR).
+  //                In production, restrict to the party author or the participant themselves.
   const party = await Party.findById(req.params.id);
 
   if (!party) {
@@ -171,6 +184,8 @@ exports.removeParticipant = catchAsync(async (req, res, next) => {
 });
 
 exports.updateParty = catchAsync(async (req, res, next) => {
+  // SECURITY NOTE: No authorization check -- any authenticated user can update any party (IDOR).
+  //                In production, verify req.user.id === party.authorId.toString().
   const allowedFields = [
     'name',
     'description',
@@ -206,6 +221,8 @@ exports.updateParty = catchAsync(async (req, res, next) => {
 });
 
 exports.deleteParty = catchAsync(async (req, res, next) => {
+  // SECURITY NOTE: No authorization check -- any authenticated user can delete any party (IDOR).
+  //                In production, verify req.user.id === party.authorId.toString(), or restrict to admins.
   await Party.findByIdAndDelete(req.params.id);
 
   res.status(204).json({
@@ -215,6 +232,8 @@ exports.deleteParty = catchAsync(async (req, res, next) => {
 });
 
 exports.endParty = catchAsync(async (req, res, next) => {
+  // SECURITY NOTE: No authorization check -- any authenticated user can archive any party (IDOR).
+  //                In production, verify req.user.id === party.authorId.toString().
   const party = await Party.findByIdAndUpdate(
     req.params.id,
     { status: 'archived' },
@@ -234,6 +253,10 @@ exports.endParty = catchAsync(async (req, res, next) => {
 });
 
 exports.addUsefulLink = catchAsync(async (req, res, next) => {
+  // SECURITY NOTE: No authorization check -- any authenticated user can add links to any party (IDOR).
+  //                In production, restrict to party participants.
+  // SECURITY NOTE: The link value is not validated as a URL and not sanitized.
+  //                In production, validate with a URL parser and reject internal/private addresses (SSRF).
   const party = await Party.findById(req.params.id);
 
   if (!party) {
@@ -276,6 +299,8 @@ exports.getPartyImpressions = catchAsync(async (req, res, next) => {
 });
 
 exports.addPartyImpression = catchAsync(async (req, res, next) => {
+  // SECURITY NOTE: No check that req.user is actually a participant of this party.
+  //                In production, verify party.participants.includes(req.user.id).
   const party = await Party.findById(req.params.id);
 
   if (!party) {
@@ -321,6 +346,8 @@ exports.getMovieImpressions = catchAsync(async (req, res, next) => {
 });
 
 exports.addMovieImpression = catchAsync(async (req, res, next) => {
+  // SECURITY NOTE: No check that req.user is a participant, or that the movie is part of this party.
+  //                In production, validate both before storing the impression.
   const party = await Party.findById(req.params.id);
 
   if (!party) {

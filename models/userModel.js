@@ -14,12 +14,16 @@ const userSchema = new mongoose.Schema(
       required: [true, 'A user must have an email'],
       unique: true,
       trim: true,
+      // SECURITY NOTE: In production, add `match: [/regex/, 'Invalid email']` to validate email format
+      //                and prevent storing malformed addresses that could cause issues downstream.
     },
     password: {
       type: String,
       required: [true, 'A user must have a password'],
       minlength: [8, 'Password must be at least 8 characters'],
-      // select: false, // TODO: Don't return password by default
+      // SECURITY NOTE: In production, uncomment the line below so the password is never returned
+      //                in queries by default, reducing accidental password exposure.
+      // select: false,
     },
     role: {
       type: String,
@@ -41,7 +45,8 @@ const userSchema = new mongoose.Schema(
   },
 );
 
-// TODO: Hash password before saving
+// SECURITY NOTE: In production, hash the password before saving using a pre-save hook with bcrypt.
+//                Storing plaintext passwords means a database leak immediately exposes all credentials.
 // userSchema.pre('save', async function(next) {
 //   // Only hash the password if it has been modified (or is new)
 //   if (!this.isModified('password')) return next();

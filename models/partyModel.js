@@ -42,6 +42,9 @@ const partySchema = new mongoose.Schema({
     default: true,
   },
   joinLink: String,
+  // SECURITY NOTE: joinLink and usefulLinks accept arbitrary strings with no URL validation.
+  //                In production, validate these with a URL parser and reject private/internal addresses
+  //                to prevent SSRF if the server ever fetches these URLs, or stored XSS if a client renders them.
   address: String,
   movies: [String],
   participants: {

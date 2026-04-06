@@ -26,6 +26,8 @@ router.route('/me/friends').put(userController.addFriend);
 router.route('/me/friends/:id').delete(userController.removeFriend);
 
 router.route('/').get(userController.getAllUsers);
+// SECURITY NOTE: getAllUsers, updateUser, and deleteUser below should be restricted to admin role only.
+//                In production, add authController.restrictTo('admin') middleware before these handlers.
 //   .post(userController.createUser);
 router
   .route('/:id')

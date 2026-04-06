@@ -21,14 +21,18 @@ const createSendToken = (user, statusCode, res) => {
       Date.now() +
         Number(process.env.JWT_COOKIE_EXPIRES_IN) * 24 * 60 * 60 * 1000,
     ),
-    // secure: true, // This should be true only in production (for https)
-    // TODO: httpOnly: true, // This cannot be accessed or modified by the browser
+    // SECURITY NOTE: secure: true must be set in production so the cookie is only sent over HTTPS.
+    // secure: true,
+    // SECURITY NOTE: httpOnly: true must be set so JavaScript cannot read the cookie,
+    //                preventing token theft via XSS attacks.
+    // httpOnly: true,
   };
   if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
 
   res.cookie('jwt', token, cookieOptions);
 
-  // TODO: Remove password from the output
+  // SECURITY NOTE: In production, exclude the password from the response payload.
+  //                Even though it is plaintext here, it should never be returned to the client.
   // user.password = undefined;
 
   res.status(statusCode).json({
@@ -41,6 +45,8 @@ const createSendToken = (user, statusCode, res) => {
 };
 
 exports.signup = catchAsync(async (req, res, next) => {
+  // SECURITY NOTE: Accepting `role` directly from req.body allows any user to register as an admin
+  //                (privilege escalation). In production, remove `role` from this or validate it server-side.
   const newUser = await User.create({
     username: req.body.username,
     email: req.body.email,
@@ -64,11 +70,13 @@ exports.login = catchAsync(async (req, res, next) => {
   // 2. Check if the user exists and the password is correct
   const user = await User.findOne({ email: email }).select('+password');
 
-  // TODO:
+  // SECURITY NOTE: In production, use bcrypt.compare() instead of a direct equality check.
+  //                Plaintext comparison is trivially bypassable if the database is leaked.
   // if (!user || !(await user.correctPassword(password, user.password))) {
   //   return next(new AppError("Incorrect email or password", 401));
   // }
-
+  // SECURITY NOTE: The error message deliberately does not distinguish between wrong email and
+  //                wrong password, to prevent user enumeration.
   if (!user || user.password !== password) {
     return next(new AppError('Incorrect email or password', 401));
   }
@@ -78,6 +86,9 @@ exports.login = catchAsync(async (req, res, next) => {
 });
 
 exports.logout = catchAsync(async (req, res, next) => {
+  // SECURITY NOTE: Clearing the cookie only removes it from the browser.
+  //                The JWT itself is still valid until it expires — there is no server-side revocation.
+  //                In production, maintain a token blacklist (e.g. in Redis) to invalidate tokens on logout.
   res.clearCookie('jwt');
   res.status(200).json({ status: 'success' });
 });
@@ -116,7 +127,8 @@ exports.protect = catchAsync(async (req, res, next) => {
     return next(new AppError('This user does not exist!', 401));
   }
 
-  // 4. TODO: Check if user changed passwords after token was issued
+  // 4. SECURITY NOTE: In production, check if the user changed their password after the token was issued.
+  //                   If so, the token should be considered invalid to prevent use of stolen old tokens.
   // if (currentUser.changedPasswordAfter(decoded.iat)) {
   //   return next(
   //     new AppError('User recently changed password! Plase log in again.', 401),
