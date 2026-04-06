@@ -326,25 +326,6 @@ exports.addPartyImpression = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.getMovieImpressions = catchAsync(async (req, res, next) => {
-  const party = await Party.findById(req.params.id);
-
-  if (!party) {
-    return next(new AppError('No party found with that ID', 404));
-  }
-
-  const movieImpressions = party.movieImpressions.filter(
-    (impression) => impression.movieId === req.params.movieId,
-  );
-
-  res.status(200).json({
-    status: 'success',
-    data: {
-      impressions: movieImpressions,
-    },
-  });
-});
-
 exports.addMovieImpression = catchAsync(async (req, res, next) => {
   // SECURITY NOTE: No check that req.user is a participant, or that the movie is part of this party.
   //                In production, validate both before storing the impression.
@@ -355,7 +336,7 @@ exports.addMovieImpression = catchAsync(async (req, res, next) => {
   }
 
   const impression = {
-    movieId: req.params.movieId,
+    movieId: req.body.movieId,
     userId: req.user.id,
     impression: req.body.impression,
   };

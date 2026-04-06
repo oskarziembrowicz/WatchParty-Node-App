@@ -30,8 +30,7 @@ router
   .get(partyController.getPartyImpressions)
   .post(partyController.addPartyImpression);
 router
-  .route('/:id/movies/:movieId/impressions')
-  .get(partyController.getMovieImpressions)
+  .route('/:id/movies/impressions')
   .post(partyController.addMovieImpression);
 
 // SHARED FILES
