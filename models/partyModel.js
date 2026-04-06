@@ -18,6 +18,15 @@ const MovieImpression = new mongoose.Schema({
   impression: String,
 });
 
+const SharedFile = new mongoose.Schema({
+  filename: String, // name used to store the file on disk
+  originalName: String,
+  uploaderId: { type: mongoose.Types.ObjectId, ref: 'User' },
+  uploadDate: { type: Date, default: Date.now },
+  mimetype: String,
+  size: Number,
+});
+
 const partySchema = new mongoose.Schema({
   name: {
     type: String,
@@ -41,7 +50,7 @@ const partySchema = new mongoose.Schema({
     default: [],
   },
   usefulLinks: [String],
-  // sharedFiles: [File],
+  sharedFiles: [SharedFile],
   creationDate: {
     type: Date,
     default: Date.now,

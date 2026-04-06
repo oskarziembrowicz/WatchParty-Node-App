@@ -1,7 +1,13 @@
+const fs = require('fs');
+const { promisify } = require('util');
+const path = require('path');
+
+const unlinkAsync = promisify(fs.unlink);
 const catchAsync = require('../utils/catchAsync');
 const Party = require('../models/partyModel');
 const AppError = require('../utils/appError');
 const User = require('../models/userModel');
+const upload = require('../utils/upload');
 
 exports.getAllParties = catchAsync(async (req, res, next) => {
   const parties = await Party.find();
@@ -339,4 +345,78 @@ exports.addMovieImpression = catchAsync(async (req, res, next) => {
       updatedParty,
     },
   });
+});
+
+// ─── Shared Files ────────────────────────────────────────────────────────────
+
+exports.getSharedFiles = catchAsync(async (req, res, next) => {
+  const party = await Party.findById(req.params.id);
+  if (!party) return next(new AppError('No party found with that ID', 404));
+  res
+    .status(200)
+    .json({ status: 'success', data: { files: party.sharedFiles } });
+});
+
+// multer middleware runs first, then the async handler
+// SECURITY NOTE: In production, verify req.user is a party participant before allowing upload
+exports.uploadSharedFile = [
+  upload.single('file'),
+  catchAsync(async (req, res, next) => {
+    if (!req.file) return next(new AppError('No file provided', 400));
+
+    const party = await Party.findById(req.params.id);
+    if (!party) return next(new AppError('No party found with that ID', 404));
+
+    const fileEntry = {
+      filename: req.file.filename,
+      originalName: req.file.originalname,
+      uploaderId: req.user.id,
+      mimetype: req.file.mimetype,
+      size: req.file.size,
+    };
+
+    party.sharedFiles.push(fileEntry);
+    await party.save();
+
+    res.status(201).json({ status: 'success', data: { file: fileEntry } });
+  }),
+];
+
+// SECURITY NOTE: In production, verify req.user is a party participant before allowing download
+exports.downloadSharedFile = catchAsync(async (req, res, next) => {
+  const party = await Party.findById(req.params.id);
+  if (!party) return next(new AppError('No party found with that ID', 404));
+
+  const file = party.sharedFiles.id(req.params.fileId);
+  if (!file) return next(new AppError('File not found', 404));
+
+  // SECURITY NOTE: In production, validate that the resolved path stays within the uploads directory
+  //                to prevent path traversal (e.g. use path.resolve + startsWith check)
+  const filePath = path.join(__dirname, '..', 'uploads', file.filename);
+  res.download(filePath, file.originalName);
+});
+
+// SECURITY NOTE: In production, restrict deletion to the uploader or an admin
+exports.deleteSharedFile = catchAsync(async (req, res, next) => {
+  const party = await Party.findById(req.params.id);
+  if (!party) return next(new AppError('No party found with that ID', 404));
+
+  const file = party.sharedFiles.id(req.params.fileId);
+  if (!file) return next(new AppError('File not found', 404));
+
+  // SECURITY NOTE: In production, validate the path to prevent path traversal
+  const filePath = path.join(__dirname, '..', 'uploads', file.filename);
+
+  // Remove from disk; ignore ENOENT in case the file was already deleted manually
+  try {
+    await unlinkAsync(filePath);
+  } catch (err) {
+    if (err.code !== 'ENOENT')
+      return next(new AppError('Error deleting file from disk', 500));
+  }
+
+  party.sharedFiles.pull({ _id: req.params.fileId });
+  await party.save();
+
+  res.status(204).json({ status: 'success', data: null });
 });

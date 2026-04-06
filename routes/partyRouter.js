@@ -34,4 +34,14 @@ router
   .get(partyController.getMovieImpressions)
   .post(partyController.addMovieImpression);
 
+// SHARED FILES
+router
+  .route('/:id/files')
+  .get(partyController.getSharedFiles)
+  .post(partyController.uploadSharedFile);
+router
+  .route('/:id/files/:fileId')
+  .get(partyController.downloadSharedFile)
+  .delete(partyController.deleteSharedFile);
+
 module.exports = router;
