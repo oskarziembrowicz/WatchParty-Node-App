@@ -229,11 +229,21 @@ exports.deleteParty = catchAsync(async (req, res, next) => {
   });
 });
 
-// exports endParty = catchAsync(async (req, res, next) => {
-//   const party = await Party.findById(req.params.id);
+exports.endParty = catchAsync(async (req, res, next) => {
+  const party = await Party.findByIdAndUpdate(
+    req.params.id,
+    { status: 'archived' },
+    { new: true },
+  );
 
-//   if (!party) {
-//     return next(new AppError('No party found with that ID', 404));
-//   }
+  if (!party) {
+    return next(new AppError('No party found with that ID', 404));
+  }
 
-// });
+  res.status(200).json({
+    status: 'success',
+    data: {
+      party,
+    },
+  });
+});
