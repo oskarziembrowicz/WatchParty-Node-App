@@ -247,3 +247,91 @@ exports.endParty = catchAsync(async (req, res, next) => {
     },
   });
 });
+
+// IMPRESSIONS
+exports.getPartyImpressions = catchAsync(async (req, res, next) => {
+  const party = await Party.findById(req.params.id);
+
+  if (!party) {
+    return next(new AppError('No party found with that ID', 404));
+  }
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      impressions: party.partyImpressions,
+    },
+  });
+});
+
+exports.addPartyImpression = catchAsync(async (req, res, next) => {
+  const party = await Party.findById(req.params.id);
+
+  if (!party) {
+    return next(new AppError('No party found with that ID', 404));
+  }
+
+  const impression = {
+    userId: req.user.id,
+    impression: req.body.impression,
+  };
+
+  party.partyImpressions.push(impression);
+  const updatedParty = await Party.findByIdAndUpdate(req.params.id, party, {
+    new: true,
+    runValidators: true,
+  });
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      updatedParty,
+    },
+  });
+});
+
+exports.getMovieImpressions = catchAsync(async (req, res, next) => {
+  const party = await Party.findById(req.params.id);
+
+  if (!party) {
+    return next(new AppError('No party found with that ID', 404));
+  }
+
+  const movieImpressions = party.movieImpressions.filter(
+    (impression) => impression.movieId === req.params.movieId,
+  );
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      impressions: movieImpressions,
+    },
+  });
+});
+
+exports.addMovieImpression = catchAsync(async (req, res, next) => {
+  const party = await Party.findById(req.params.id);
+
+  if (!party) {
+    return next(new AppError('No party found with that ID', 404));
+  }
+
+  const impression = {
+    movieId: req.params.movieId,
+    userId: req.user.id,
+    impression: req.body.impression,
+  };
+
+  party.movieImpressions.push(impression);
+  const updatedParty = await Party.findByIdAndUpdate(req.params.id, party, {
+    new: true,
+    runValidators: true,
+  });
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      updatedParty,
+    },
+  });
+});

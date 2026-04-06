@@ -23,4 +23,14 @@ router
   .route('/:id/participants/:userId')
   .delete(partyController.removeParticipant);
 
+// IMPRESSIONS
+router
+  .route('/:id/impressions')
+  .get(partyController.getPartyImpressions)
+  .post(partyController.addPartyImpression);
+router
+  .route('/:id/movies/:movieId/impressions')
+  .get(partyController.getMovieImpressions)
+  .post(partyController.addMovieImpression);
+
 module.exports = router;
