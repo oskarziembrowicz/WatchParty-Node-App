@@ -4,7 +4,7 @@ const cookieParser = require('cookie-parser');
 const partyRouter = require('./routes/partyRouter');
 const movieRouter = require('./routes/movieRouter');
 const userRouter = require('./routes/userRouter');
-const globalErrorHanler = require('./controllers/errorController');
+const globalErrorHandler = require('./controllers/errorController');
 
 const app = express();
 
@@ -76,6 +76,6 @@ app.use('/api/v1/parties', partyRouter);
 app.use('/api/v1/movies', movieRouter);
 app.use('/api/v1/users', userRouter);
 
-app.use(globalErrorHanler);
+app.use(globalErrorHandler);
 
 module.exports = app;
