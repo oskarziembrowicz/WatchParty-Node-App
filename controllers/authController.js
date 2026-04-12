@@ -9,9 +9,8 @@ const verifyToken = promisify(jwt.verify);
 
 const signToken = (id) =>
   // @ts-ignore - process.env values are checked at runtime
-  jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRES_IN,
-  });
+  // SECURITY NOTE: add options = { expiresIn: process.env.JWT_EXPIRES_IN }
+  jwt.sign({ id }, process.env.JWT_SECRET);
 
 // TODO: Comment on jwt expitarion
 const createSendToken = (user, statusCode, res) => {
@@ -94,7 +93,6 @@ exports.logout = catchAsync(async (req, res, next) => {
 });
 
 exports.protect = catchAsync(async (req, res, next) => {
-  // 1. Get token and check if it exists
   let token;
 
   // 1. Try to get token from cookies first
