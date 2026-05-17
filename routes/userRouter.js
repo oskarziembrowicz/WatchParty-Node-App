@@ -25,19 +25,21 @@ router.route('/me/movies/:id').delete(userController.removeMovie);
 router.route('/me/friends').put(userController.addFriend);
 router.route('/me/friends/:id').delete(userController.removeFriend);
 
-router.route('/').get(userController.getAllUsers);
-// SECURITY NOTE: getAllUsers, updateUser, and deleteUser below should be restricted to admin role only.
-//                In production, add authController.restrictTo('admin') middleware before these handlers.
-//   .post(userController.createUser);
+router
+  .route('/')
+  .get(authController.restrictTo('admin'), userController.getAllUsers);
+
 router
   .route('/:id')
   .get(userController.getUser)
-  .patch(userController.updateUser)
-  .delete(userController.deleteUser);
+  .patch(authController.restrictTo('admin'), userController.updateUser)
+  .delete(authController.restrictTo('admin'), userController.deleteUser);
 
 router.route('/:id/hosted-parties').get(userController.getHostedParties);
 
-router.route('/:id/parties').get(userController.getUserParties);
+router
+  .route('/:id/parties')
+  .get(authController.restrictTo('admin'), userController.getUserParties);
 
 // router.post("/forgotPassword", authController.forgotPassword);
 // router.patch("/resetPassword/:token", authController.resetPassword);

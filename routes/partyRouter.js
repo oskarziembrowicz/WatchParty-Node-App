@@ -8,7 +8,7 @@ router.use(authController.protect);
 
 router
   .route('/')
-  .get(partyController.getAllParties)
+  .get(authController.restrictTo('admin'), partyController.getAllParties)
   .post(partyController.createParty);
 router
   .route('/:id')
