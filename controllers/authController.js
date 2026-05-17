@@ -52,7 +52,6 @@ exports.signup = catchAsync(async (req, res, next) => {
     password: req.body.password,
     // passwordConfirm: req.body.passwordConfirm,
     // passwordChangedAt: req.body.passwordChangedAt,
-    role: req.body.role,
   });
 
   createSendToken(newUser, 201, res);
@@ -74,8 +73,8 @@ exports.login = catchAsync(async (req, res, next) => {
   // if (!user || !(await user.correctPassword(password, user.password))) {
   //   return next(new AppError("Incorrect email or password", 401));
   // }
-  // SECURITY NOTE: The error message deliberately does not distinguish between wrong email and
-  //                wrong password, to prevent user enumeration.
+  // The error message deliberately does not distinguish between wrong email and
+  // wrong password, to prevent user enumeration.
   if (!user || user.password !== password) {
     return next(new AppError('Incorrect email or password', 401));
   }
@@ -137,3 +136,14 @@ exports.protect = catchAsync(async (req, res, next) => {
   req.user = currentUser;
   next();
 });
+
+exports.restrictTo =
+  (...roles) =>
+  (req, res, next) => {
+    if (!roles.includes(req.user.role)) {
+      return next(
+        new AppError('You do not have permission to perform this action', 403),
+      );
+    }
+    next();
+  };
