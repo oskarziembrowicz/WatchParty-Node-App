@@ -21,10 +21,11 @@ const createSendToken = (user, statusCode, res) => {
         Number(process.env.JWT_COOKIE_EXPIRES_IN) * 24 * 60 * 60 * 1000,
     ),
     // SECURITY NOTE: secure: true must be set in production so the cookie is only sent over HTTPS.
-    // secure: true,
+    secure: false,
     // SECURITY NOTE: httpOnly: true must be set so JavaScript cannot read the cookie,
     //                preventing token theft via XSS attacks.
-    // httpOnly: true,
+    httpOnly: true,
+    sameSite: 'strict',
   };
   if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
 
@@ -44,8 +45,6 @@ const createSendToken = (user, statusCode, res) => {
 };
 
 exports.signup = catchAsync(async (req, res, next) => {
-  // SECURITY NOTE: Accepting `role` directly from req.body allows any user to register as an admin
-  //                (privilege escalation). In production, remove `role` from this or validate it server-side.
   const newUser = await User.create({
     username: req.body.username,
     email: req.body.email,
