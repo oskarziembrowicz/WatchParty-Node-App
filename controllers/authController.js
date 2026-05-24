@@ -28,9 +28,7 @@ const createSendToken = (user, statusCode, res) => {
 
   res.cookie('jwt', token, cookieOptions);
 
-  // SECURITY NOTE: In production, exclude the password from the response payload.
-  //                Even though it is plaintext here, it should never be returned to the client.
-  // user.password = undefined;
+  user.password = undefined;
 
   res.status(statusCode).json({
     status: 'success',

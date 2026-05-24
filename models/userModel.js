@@ -21,9 +21,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, 'A user must have a password'],
       // minlength: [8, 'Password must be at least 8 characters'],
-      // SECURITY NOTE: In production, uncomment the line below so the password is never returned
-      //                in queries by default, reducing accidental password exposure.
-      // select: false,
+      select: false,
     },
     role: {
       type: String,

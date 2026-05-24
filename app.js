@@ -6,13 +6,13 @@ const movieRouter = require('./routes/movieRouter');
 const userRouter = require('./routes/userRouter');
 const globalErrorHandler = require('./controllers/errorController');
 const helmet = require('helmet').default ?? require('helmet');
+const mongoSanitize = require('express-mongo-sanitize');
+const { xss } = require('express-xss-sanitizer');
+const hpp = require('hpp');
 
 const app = express();
 
 // 1. GLOBAL MIDDLEWARES
-
-// Set security HTTP headers
-app.use(helmet());
 
 /* SECTION FOR FUTURE SECURITY
 
@@ -24,26 +24,6 @@ const limiter = rateLimit({
   message: "Too many requests from this IP! Please try again in an hour.",
 });
 app.use("/api", limiter);
-
-// Data sanitization against NoSQL query injection
-app.use(mongoSanitize());
-
-// Data sanitization against XSS
-app.use(xss());
-
-// Prevent parameter pollution
-app.use(
-  hpp({
-    whitelist: [
-      "duration",
-      "ratingsQuantity",
-      "ratingsAverage",
-      "maxGroupSize",
-      "difficulty",
-      "price",
-    ],
-  }),
-);
 
 // SECURITY NOTE: Configure CORS to restrict which origins can access this API.
 //                Without it, any website can make cross-origin requests on behalf of a logged-in user.
@@ -60,6 +40,18 @@ if (process.env.NODE_ENV === 'development') {
 // SECURITY NOTE: This limit only applies to JSON bodies; multipart/form-data (file uploads) is not capped here.
 //                In production, also set limits inside multer (see utils/upload.js).
 app.use(express.json({ limit: '10kb' }));
+
+// Set security HTTP headers
+app.use(helmet());
+
+// Data sanitization against NoSQL query injection
+app.use(mongoSanitize());
+
+// Data sanitization against XSS
+app.use(xss());
+
+// Prevent parameter pollution
+app.use(hpp());
 
 // Cookie parser
 // SECURITY NOTE: Without signed cookies (cookieParser(secret)), cookie values can be tampered with by the client.
