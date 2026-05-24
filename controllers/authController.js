@@ -40,10 +40,16 @@ const createSendToken = (user, statusCode, res) => {
 };
 
 exports.signup = catchAsync(async (req, res, next) => {
+  const { username, email, password } = req.body;
+
+  if (!password || password.length < 8) {
+    return next(new AppError('Password must be at least 8 characters', 400));
+  }
+
   const newUser = await User.create({
-    username: req.body.username,
-    email: req.body.email,
-    password: req.body.password,
+    username,
+    email,
+    password,
     // passwordConfirm: req.body.passwordConfirm,
     // passwordChangedAt: req.body.passwordChangedAt,
   });
