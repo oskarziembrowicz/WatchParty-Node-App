@@ -9,8 +9,9 @@ const verifyToken = promisify(jwt.verify);
 
 const signToken = (id) =>
   // @ts-ignore - process.env values are checked at runtime
-  // SECURITY NOTE: add options = { expiresIn: process.env.JWT_EXPIRES_IN }
-  jwt.sign({ id }, process.env.JWT_SECRET);
+  jwt.sign({ id }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRES_IN,
+  });
 
 // TODO: Comment on jwt expitarion
 const createSendToken = (user, statusCode, res) => {
