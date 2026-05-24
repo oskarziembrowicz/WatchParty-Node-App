@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-// const bcrypt = require('bcryptjs');
+const bcrypt = require('bcryptjs');
 
 const userSchema = new mongoose.Schema(
   {
@@ -45,21 +45,18 @@ const userSchema = new mongoose.Schema(
   },
 );
 
-// SECURITY NOTE: In production, hash the password before saving using a pre-save hook with bcrypt.
-//                Storing plaintext passwords means a database leak immediately exposes all credentials.
-// userSchema.pre('save', async function(next) {
-//   // Only hash the password if it has been modified (or is new)
-//   if (!this.isModified('password')) return next();
+userSchema.pre('save', async function (next) {
+  // Only hash the password if it has been modified (or is new)
+  if (!this.isModified('password')) return next();
 
-//   // Hash the password with cost of 12
-//   this.password = await bcrypt.hash(this.password, 12);
-//   next();
-// });
+  // Hash the password with cost of 12
+  this.password = await bcrypt.hash(this.password, 12);
+  next();
+});
 
-// // Instance method to compare passwords
-// userSchema.methods.comparePassword = async function(candidatePassword) {
-//   return await bcrypt.compare(candidatePassword, this.password);
-// };
+userSchema.methods.comparePassword = async function (candidatePassword) {
+  return await bcrypt.compare(candidatePassword, this.password);
+};
 
 const User = mongoose.model('User', userSchema);
 

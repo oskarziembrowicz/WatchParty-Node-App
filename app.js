@@ -5,15 +5,17 @@ const partyRouter = require('./routes/partyRouter');
 const movieRouter = require('./routes/movieRouter');
 const userRouter = require('./routes/userRouter');
 const globalErrorHandler = require('./controllers/errorController');
+const helmet = require('helmet').default ?? require('helmet');
 
 const app = express();
 
 // 1. GLOBAL MIDDLEWARES
 
-/* SECTION FOR FUTURE SECURITY
-
 // Set security HTTP headers
 app.use(helmet());
+
+/* SECTION FOR FUTURE SECURITY
+
 
 // This limiter is set to max of 100 request an hour
 const limiter = rateLimit({

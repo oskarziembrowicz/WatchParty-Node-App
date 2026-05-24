@@ -20,10 +20,7 @@ const createSendToken = (user, statusCode, res) => {
       Date.now() +
         Number(process.env.JWT_COOKIE_EXPIRES_IN) * 24 * 60 * 60 * 1000,
     ),
-    // SECURITY NOTE: secure: true must be set in production so the cookie is only sent over HTTPS.
     secure: false,
-    // SECURITY NOTE: httpOnly: true must be set so JavaScript cannot read the cookie,
-    //                preventing token theft via XSS attacks.
     httpOnly: true,
     sameSite: 'strict',
   };
@@ -67,14 +64,9 @@ exports.login = catchAsync(async (req, res, next) => {
   // 2. Check if the user exists and the password is correct
   const user = await User.findOne({ email: email }).select('+password');
 
-  // SECURITY NOTE: In production, use bcrypt.compare() instead of a direct equality check.
-  //                Plaintext comparison is trivially bypassable if the database is leaked.
-  // if (!user || !(await user.correctPassword(password, user.password))) {
-  //   return next(new AppError("Incorrect email or password", 401));
-  // }
   // The error message deliberately does not distinguish between wrong email and
   // wrong password, to prevent user enumeration.
-  if (!user || user.password !== password) {
+  if (!user || !(await user.comparePassword(password))) {
     return next(new AppError('Incorrect email or password', 401));
   }
 
