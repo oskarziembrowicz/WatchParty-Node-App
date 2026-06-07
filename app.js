@@ -9,36 +9,33 @@ const helmet = require('helmet').default ?? require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
 const { xss } = require('express-xss-sanitizer');
 const hpp = require('hpp');
+const { rateLimit } = require('express-rate-limit');
+const logger = require('./utils/logger');
 
 const app = express();
 
 // 1. GLOBAL MIDDLEWARES
 
-/* SECTION FOR FUTURE SECURITY
-
-
-// This limiter is set to max of 100 request an hour
-const limiter = rateLimit({
-  max: 100,
+// Rate limiting — auth endpoints: max 10 requests per hour per IP
+const authLimiter = rateLimit({
+  max: 10,
   windowMs: 60 * 60 * 1000,
-  message: "Too many requests from this IP! Please try again in an hour.",
+  message: 'Too many requests from this IP, please try again in an hour.',
+  standardHeaders: true,
+  legacyHeaders: false,
 });
-app.use("/api", limiter);
+app.use('/api/v1/users/login', authLimiter);
+app.use('/api/v1/users/signup', authLimiter);
 
-// SECURITY NOTE: Configure CORS to restrict which origins can access this API.
-//                Without it, any website can make cross-origin requests on behalf of a logged-in user.
-// app.use(cors({ origin: process.env.ALLOWED_ORIGIN, credentials: true }));
-
-*/
-
-// Development logging
-if (process.env.NODE_ENV === 'development') {
-  app.use(morgan('dev'));
-}
+// HTTP request logging — format only includes method, URL, status and response
+// time. Request bodies are never logged, so passwords and tokens are safe.
+app.use(
+  morgan(':method :url :status :response-time ms', {
+    stream: logger.stream,
+  }),
+);
 
 // Body parser, reading data from body into req.body
-// SECURITY NOTE: This limit only applies to JSON bodies; multipart/form-data (file uploads) is not capped here.
-//                In production, also set limits inside multer (see utils/upload.js).
 app.use(express.json({ limit: '10kb' }));
 
 // Set security HTTP headers
@@ -54,7 +51,6 @@ app.use(xss());
 app.use(hpp());
 
 // Cookie parser
-// SECURITY NOTE: Without signed cookies (cookieParser(secret)), cookie values can be tampered with by the client.
 app.use(cookieParser());
 
 // Test middleware

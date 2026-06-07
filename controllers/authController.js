@@ -3,6 +3,7 @@ const { promisify } = require('util');
 const User = require('../models/userModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
+const logger = require('../utils/logger');
 
 // Promisify jwt.verify
 const verifyToken = promisify(jwt.verify);
@@ -72,6 +73,12 @@ exports.login = catchAsync(async (req, res, next) => {
   // The error message deliberately does not distinguish between wrong email and
   // wrong password, to prevent user enumeration.
   if (!user || !(await user.comparePassword(password))) {
+    // Log the failure without including the supplied password.
+    logger.warn('AUTH_FAILURE', {
+      event: 'login_failed',
+      email,
+      ip: req.ip,
+    });
     return next(new AppError('Incorrect email or password', 401));
   }
 
@@ -104,6 +111,11 @@ exports.protect = catchAsync(async (req, res, next) => {
   }
 
   if (!token) {
+    logger.warn('AUTH_FAILURE', {
+      event: 'missing_token',
+      ip: req.ip,
+      path: req.originalUrl,
+    });
     return next(
       new AppError('You are not logged in! Please log in to get access', 401),
     );
@@ -137,6 +149,15 @@ exports.restrictTo =
   (...roles) =>
   (req, res, next) => {
     if (!roles.includes(req.user.role)) {
+      logger.warn('ACCESS_DENIED', {
+        event: 'forbidden',
+        userId: req.user._id,
+        role: req.user.role,
+        requiredRoles: roles,
+        path: req.originalUrl,
+        method: req.method,
+        ip: req.ip,
+      });
       return next(
         new AppError('You do not have permission to perform this action', 403),
       );

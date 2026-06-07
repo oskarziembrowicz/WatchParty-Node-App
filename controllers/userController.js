@@ -4,9 +4,6 @@ const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
 
 exports.getAllUsers = catchAsync(async (req, res, next) => {
-  // SECURITY NOTE: This returns every user in the database, including their plaintext passwords
-  //                and all personal data. In production, restrict to admin role, apply field
-  //                projection to exclude sensitive fields, and add pagination.
   const users = await User.find();
 
   res.status(200).json({

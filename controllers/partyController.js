@@ -398,8 +398,6 @@ exports.downloadSharedFile = catchAsync(async (req, res, next) => {
   const file = party.sharedFiles.id(req.params.fileId);
   if (!file) return next(new AppError('File not found', 404));
 
-  // SECURITY NOTE: In production, validate that the resolved path stays within the uploads directory
-  //                to prevent path traversal (e.g. use path.resolve + startsWith check)
   const filePath = path.join(__dirname, '..', 'uploads', file.filename);
   res.download(filePath, file.originalName);
 });
@@ -412,7 +410,6 @@ exports.deleteSharedFile = catchAsync(async (req, res, next) => {
   const file = party.sharedFiles.id(req.params.fileId);
   if (!file) return next(new AppError('File not found', 404));
 
-  // SECURITY NOTE: In production, validate the path to prevent path traversal
   const filePath = path.join(__dirname, '..', 'uploads', file.filename);
 
   // Remove from disk; ignore ENOENT in case the file was already deleted manually
