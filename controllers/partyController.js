@@ -11,8 +11,7 @@ const upload = require('../utils/upload');
 
 exports.getAllParties = catchAsync(async (req, res, next) => {
   // SECURITY NOTE: Returns every party in the database to any authenticated user.
-  //                In production, filter by participant/author to avoid leaking private parties,
-  //                and add pagination to prevent large data dumps.
+  //                In production, filter by participant/author to avoid leaking private parties
   const parties = await Party.find();
 
   res.status(200).json({

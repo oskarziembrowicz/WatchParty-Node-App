@@ -19,8 +19,6 @@ exports.getAllMovies = catchAsync(async (req, res, next) => {
 
   // SECURITY NOTE: req.query.title is passed to an external service without sanitization.
   //                In production, validate and sanitize query parameters before forwarding them.
-  // SECURITY NOTE: There is no response caching; every request hits the external API, which may
-  //                exhaust rate limits or quotas. In production, add a caching layer (e.g. Redis).
   const response = await fetch(`${omdbURL}t=${req.query.title}`);
   const data = await response.json();
 

@@ -87,9 +87,6 @@ exports.login = catchAsync(async (req, res, next) => {
 });
 
 exports.logout = catchAsync(async (req, res, next) => {
-  // SECURITY NOTE: Clearing the cookie only removes it from the browser.
-  //                The JWT itself is still valid until it expires — there is no server-side revocation.
-  //                In production, maintain a token blacklist (e.g. in Redis) to invalidate tokens on logout.
   res.clearCookie('jwt');
   res.status(200).json({ status: 'success' });
 });
@@ -132,8 +129,6 @@ exports.protect = catchAsync(async (req, res, next) => {
     return next(new AppError('This user does not exist!', 401));
   }
 
-  // 4. SECURITY NOTE: In production, check if the user changed their password after the token was issued.
-  //                   If so, the token should be considered invalid to prevent use of stolen old tokens.
   // if (currentUser.changedPasswordAfter(decoded.iat)) {
   //   return next(
   //     new AppError('User recently changed password! Plase log in again.', 401),
