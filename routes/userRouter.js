@@ -10,7 +10,7 @@ router.post('/login', authController.login);
 
 router.use(authController.protect);
 
-router.get('/logout', authController.logout);
+router.post('/logout', authController.logout);
 
 router
   .route('/me')
