@@ -8,6 +8,7 @@ const Party = require('../models/partyModel');
 const AppError = require('../utils/appError');
 const User = require('../models/userModel');
 const upload = require('../utils/upload');
+const { validateHttpUrl } = require('../utils/validateUrl');
 
 exports.getAllParties = catchAsync(async (req, res, next) => {
   // SECURITY NOTE: Returns every party in the database to any authenticated user.
@@ -38,8 +39,16 @@ exports.getParty = catchAsync(async (req, res, next) => {
 });
 
 exports.createParty = catchAsync(async (req, res, next) => {
-  // SECURITY NOTE: `joinLink` is stored as-is with no validation. In production, validate that it
-  //                is a real URL and does not point to internal network addresses (SSRF prevention).
+  if (req.body.joinLink !== undefined) {
+    try {
+      req.body.joinLink = await validateHttpUrl(req.body.joinLink);
+    } catch {
+      return next(
+        new AppError('joinLink must be a valid http or https URL', 400),
+      );
+    }
+  }
+
   const party = {
     name: req.body.name,
     description: req.body.description,
@@ -185,6 +194,16 @@ exports.removeParticipant = catchAsync(async (req, res, next) => {
 exports.updateParty = catchAsync(async (req, res, next) => {
   // SECURITY NOTE: No authorization check -- any authenticated user can update any party (IDOR).
   //                In production, verify req.user.id === party.authorId.toString().
+  if (req.body.joinLink !== undefined) {
+    try {
+      req.body.joinLink = await validateHttpUrl(req.body.joinLink);
+    } catch {
+      return next(
+        new AppError('joinLink must be a valid http or https URL', 400),
+      );
+    }
+  }
+
   const allowedFields = [
     'name',
     'description',
@@ -254,8 +273,6 @@ exports.endParty = catchAsync(async (req, res, next) => {
 exports.addUsefulLink = catchAsync(async (req, res, next) => {
   // SECURITY NOTE: No authorization check -- any authenticated user can add links to any party (IDOR).
   //                In production, restrict to party participants.
-  // SECURITY NOTE: The link value is not validated as a URL and not sanitized.
-  //                In production, validate with a URL parser and reject internal/private addresses (SSRF).
   const party = await Party.findById(req.params.id);
 
   if (!party) {
@@ -267,7 +284,14 @@ exports.addUsefulLink = catchAsync(async (req, res, next) => {
     return next(new AppError('Link is required', 400));
   }
 
-  party.usefulLinks.push(link);
+  let validatedLink;
+  try {
+    validatedLink = await validateHttpUrl(link);
+  } catch {
+    return next(new AppError('link must be a valid http or https URL', 400));
+  }
+
+  party.usefulLinks.push(validatedLink);
   const updatedParty = await Party.findByIdAndUpdate(req.params.id, party, {
     new: true,
     runValidators: true,
