@@ -50,6 +50,7 @@ exports.getMyData = catchAsync(async (req, res, next) => {
 exports.updateMe = catchAsync(async (req, res, next) => {
   // Only allow updating "username" and "email"
   const allowedFields = ['username', 'email'];
+  /** @type {Record<string, unknown>} */
   const updates = {};
   allowedFields.forEach((field) => {
     if (req.body[field] !== undefined) {
@@ -74,6 +75,7 @@ exports.updateUser = catchAsync(async (req, res, next) => {
   // SECURITY NOTE: Any authenticated user can update any other user's data (IDOR / broken access control).
   //                In production, restrict this endpoint to admins, or verify req.user.id === userId.
   const allowedFields = ['username', 'email'];
+  /** @type {Record<string, unknown>} */
   const updates = {};
   allowedFields.forEach((field) => {
     if (req.body[field] !== undefined) {

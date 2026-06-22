@@ -11,6 +11,7 @@ const { xss } = require('express-xss-sanitizer');
 const hpp = require('hpp');
 const { rateLimit } = require('express-rate-limit');
 const logger = require('./utils/logger');
+const { morganStream } = require('./utils/logger');
 
 const app = express();
 
@@ -29,11 +30,7 @@ app.use('/api/v1/users/signup', authLimiter);
 
 // HTTP request logging — format only includes method, URL, status and response
 // time. Request bodies are never logged, so passwords and tokens are safe.
-app.use(
-  morgan(':method :url :status :response-time ms', {
-    stream: logger.stream,
-  }),
-);
+app.use(morgan('combined', { stream: morganStream }));
 
 // Body parser, reading data from body into req.body
 app.use(express.json({ limit: '10kb' }));

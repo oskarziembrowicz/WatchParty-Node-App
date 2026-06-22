@@ -17,10 +17,8 @@ const logger =
         transports: [new transports.Console()],
       });
 
-// Morgan-compatible write stream — never receives request body, only the
-// pre-formatted Morgan log line (method, url, status, response-time).
-logger.stream = {
-  write: (message) => logger.http(message.trimEnd()),
+const morganStream = {
+  write: (message: string) => logger.http(message.trimEnd()),
 };
 
-module.exports = logger;
+module.exports = { logger, morganStream };

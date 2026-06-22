@@ -14,8 +14,6 @@ const userSchema = new mongoose.Schema(
       required: [true, 'A user must have an email'],
       unique: true,
       trim: true,
-      // SECURITY NOTE: In production, add `match: [/regex/, 'Invalid email']` to validate email format
-      //                and prevent storing malformed addresses that could cause issues downstream.
     },
     password: {
       type: String,

@@ -3,9 +3,9 @@ const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 
 dotenv.config();
-// SECURITY NOTE: The API key is embedded in a URL, which means it will appear in server access logs
-//                and any network monitoring tools. In production, pass the key as a header instead.
 const omdbURL = `http://www.omdbapi.com/?apikey=${process.env.OMDB_API_KEY}&`;
+
+const isValidImdbId = (id) => /^tt\d{7,10}$/.test(id);
 
 exports.getAllMovies = catchAsync(async (req, res, next) => {
   // fetch('https://api.trakt.tv', {
@@ -35,9 +35,13 @@ exports.getAllMovies = catchAsync(async (req, res, next) => {
 });
 
 exports.getMovieById = catchAsync(async (req, res, next) => {
-  // SECURITY NOTE: req.params.id is passed to an external service without validation.
-  //                In production, validate the format (e.g. IMDb IDs match /^tt\d+$/) before forwarding.
-  const response = await fetch(`${omdbURL}i=${req.params.id}`);
+  const { id } = req.params;
+
+  if (!isValidImdbId(id)) {
+    return next(new AppError('Invalid IMDb ID format', 400));
+  }
+
+  const response = await fetch(`${omdbURL}i=${id}`);
   const data = await response.json();
 
   if (data.Error) {
