@@ -14,7 +14,6 @@ const signToken = (id) =>
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
 
-// TODO: Comment on jwt expitarion
 const createSendToken = (user, statusCode, res) => {
   const token = signToken(user._id);
   const cookieOptions = {
@@ -52,8 +51,6 @@ exports.signup = catchAsync(async (req, res, next) => {
     username,
     email,
     password,
-    // passwordConfirm: req.body.passwordConfirm,
-    // passwordChangedAt: req.body.passwordChangedAt,
   });
 
   createSendToken(newUser, 201, res);
@@ -95,7 +92,6 @@ exports.protect = catchAsync(async (req, res, next) => {
   let token;
 
   // 1. Try to get token from cookies first
-  // console.log(req);
   if (req.cookies && req.cookies.jwt) {
     token = req.cookies.jwt;
   }
@@ -129,13 +125,7 @@ exports.protect = catchAsync(async (req, res, next) => {
     return next(new AppError('This user does not exist!', 401));
   }
 
-  // if (currentUser.changedPasswordAfter(decoded.iat)) {
-  //   return next(
-  //     new AppError('User recently changed password! Plase log in again.', 401),
-  //   );
-  // }
-
-  // GRANT ACCESS TO PROTECTED ROUTE
+  // Grant access to protected route
   req.user = currentUser;
   next();
 });

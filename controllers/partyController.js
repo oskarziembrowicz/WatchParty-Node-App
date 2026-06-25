@@ -11,8 +11,6 @@ const upload = require('../utils/upload');
 const { validateHttpUrl } = require('../utils/validateUrl');
 
 exports.getAllParties = catchAsync(async (req, res, next) => {
-  // SECURITY NOTE: Returns every party in the database to any authenticated user.
-  //                In production, filter by participant/author to avoid leaking private parties
   const parties = await Party.find();
 
   res.status(200).json({
@@ -71,8 +69,6 @@ exports.createParty = catchAsync(async (req, res, next) => {
 });
 
 exports.addMovie = catchAsync(async (req, res, next) => {
-  // SECURITY NOTE: No authorization check -- any authenticated user can add movies to any party (IDOR).
-  //                In production, verify req.user is the party author or a participant.
   const party = await Party.findById(req.params.id);
 
   if (!party) {
@@ -96,8 +92,6 @@ exports.addMovie = catchAsync(async (req, res, next) => {
 });
 
 exports.removeMovie = catchAsync(async (req, res, next) => {
-  // SECURITY NOTE: No authorization check -- any authenticated user can remove movies from any party (IDOR).
-  //                In production, verify req.user is the party author or a participant.
   const partyId = req.params.id;
   const { movieId } = req.params;
   const party = await Party.findById(partyId);
@@ -125,8 +119,6 @@ exports.removeMovie = catchAsync(async (req, res, next) => {
 });
 
 exports.addParticipant = catchAsync(async (req, res, next) => {
-  // SECURITY NOTE: No authorization check -- any authenticated user can add anyone to any party (IDOR).
-  //                In production, restrict to the party author or implement an invite/accept flow.
   const party = await Party.findById(req.params.id);
 
   if (!party) {
@@ -160,8 +152,6 @@ exports.addParticipant = catchAsync(async (req, res, next) => {
 });
 
 exports.removeParticipant = catchAsync(async (req, res, next) => {
-  // SECURITY NOTE: No authorization check -- any authenticated user can remove anyone from any party (IDOR).
-  //                In production, restrict to the party author or the participant themselves.
   const party = await Party.findById(req.params.id);
 
   if (!party) {
@@ -192,8 +182,6 @@ exports.removeParticipant = catchAsync(async (req, res, next) => {
 });
 
 exports.updateParty = catchAsync(async (req, res, next) => {
-  // SECURITY NOTE: No authorization check -- any authenticated user can update any party (IDOR).
-  //                In production, verify req.user.id === party.authorId.toString().
   if (req.body.joinLink !== undefined) {
     try {
       req.body.joinLink = await validateHttpUrl(req.body.joinLink);
@@ -239,8 +227,6 @@ exports.updateParty = catchAsync(async (req, res, next) => {
 });
 
 exports.deleteParty = catchAsync(async (req, res, next) => {
-  // SECURITY NOTE: No authorization check -- any authenticated user can delete any party (IDOR).
-  //                In production, verify req.user.id === party.authorId.toString(), or restrict to admins.
   await Party.findByIdAndDelete(req.params.id);
 
   res.status(204).json({
@@ -250,8 +236,6 @@ exports.deleteParty = catchAsync(async (req, res, next) => {
 });
 
 exports.endParty = catchAsync(async (req, res, next) => {
-  // SECURITY NOTE: No authorization check -- any authenticated user can archive any party (IDOR).
-  //                In production, verify req.user.id === party.authorId.toString().
   const party = await Party.findByIdAndUpdate(
     req.params.id,
     { status: 'archived' },
@@ -271,8 +255,6 @@ exports.endParty = catchAsync(async (req, res, next) => {
 });
 
 exports.addUsefulLink = catchAsync(async (req, res, next) => {
-  // SECURITY NOTE: No authorization check -- any authenticated user can add links to any party (IDOR).
-  //                In production, restrict to party participants.
   const party = await Party.findById(req.params.id);
 
   if (!party) {
@@ -322,8 +304,6 @@ exports.getPartyImpressions = catchAsync(async (req, res, next) => {
 });
 
 exports.addPartyImpression = catchAsync(async (req, res, next) => {
-  // SECURITY NOTE: No check that req.user is actually a participant of this party.
-  //                In production, verify party.participants.includes(req.user.id).
   const party = await Party.findById(req.params.id);
 
   if (!party) {
@@ -350,8 +330,6 @@ exports.addPartyImpression = catchAsync(async (req, res, next) => {
 });
 
 exports.addMovieImpression = catchAsync(async (req, res, next) => {
-  // SECURITY NOTE: No check that req.user is a participant, or that the movie is part of this party.
-  //                In production, validate both before storing the impression.
   const party = await Party.findById(req.params.id);
 
   if (!party) {
@@ -378,7 +356,7 @@ exports.addMovieImpression = catchAsync(async (req, res, next) => {
   });
 });
 
-// ─── Shared Files ────────────────────────────────────────────────────────────
+// SHARED FILES
 
 exports.getSharedFiles = catchAsync(async (req, res, next) => {
   const party = await Party.findById(req.params.id);
@@ -389,7 +367,6 @@ exports.getSharedFiles = catchAsync(async (req, res, next) => {
 });
 
 // multer middleware runs first, then the async handler
-// SECURITY NOTE: In production, verify req.user is a party participant before allowing upload
 exports.uploadSharedFile = [
   upload.single('file'),
   catchAsync(async (req, res, next) => {
@@ -413,7 +390,6 @@ exports.uploadSharedFile = [
   }),
 ];
 
-// SECURITY NOTE: In production, verify req.user is a party participant before allowing download
 exports.downloadSharedFile = catchAsync(async (req, res, next) => {
   const party = await Party.findById(req.params.id);
   if (!party) return next(new AppError('No party found with that ID', 404));
@@ -425,7 +401,6 @@ exports.downloadSharedFile = catchAsync(async (req, res, next) => {
   res.download(filePath, file.originalName);
 });
 
-// SECURITY NOTE: In production, restrict deletion to the uploader or an admin
 exports.deleteSharedFile = catchAsync(async (req, res, next) => {
   const party = await Party.findById(req.params.id);
   if (!party) return next(new AppError('No party found with that ID', 404));

@@ -1,5 +1,4 @@
 const express = require('express');
-// const userController = require('../controllers/userController');
 const authController = require('../controllers/authController');
 const userController = require('../controllers/userController');
 
@@ -40,14 +39,5 @@ router.route('/:id/hosted-parties').get(userController.getHostedParties);
 router
   .route('/:id/parties')
   .get(authController.restrictTo('admin'), userController.getUserParties);
-
-// router.post("/forgotPassword", authController.forgotPassword);
-// router.patch("/resetPassword/:token", authController.resetPassword);
-
-// router.patch(
-//   "/updatePassword",
-//   authController.protect,
-//   authController.updatePassword,
-// );
 
 module.exports = router;
