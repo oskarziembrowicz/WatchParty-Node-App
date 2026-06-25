@@ -10,7 +10,7 @@ const mongoSanitize = require('express-mongo-sanitize');
 const { xss } = require('express-xss-sanitizer');
 const hpp = require('hpp');
 const { rateLimit } = require('express-rate-limit');
-const logger = require('./utils/logger');
+const { logger } = require('./utils/logger');
 const { morganStream } = require('./utils/logger');
 
 const app = express();
@@ -39,7 +39,12 @@ app.use(express.json({ limit: '10kb' }));
 app.use(helmet());
 
 // Data sanitization against NoSQL query injection
-app.use(mongoSanitize());
+// express-mongo-sanitize v2 is incompatible with Express 5 (req.query is getter-only),
+// so we sanitize only req.body manually.
+app.use((req, res, next) => {
+  if (req.body) req.body = mongoSanitize.sanitize(req.body);
+  next();
+});
 
 // Data sanitization against XSS
 app.use(xss());

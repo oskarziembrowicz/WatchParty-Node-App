@@ -3,7 +3,7 @@ const { promisify } = require('util');
 const User = require('../models/userModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
-const logger = require('../utils/logger');
+const { logger } = require('../utils/logger');
 
 // Promisify jwt.verify
 const verifyToken = promisify(jwt.verify);

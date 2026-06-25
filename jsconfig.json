@@ -2,14 +2,8 @@
   "compilerOptions": {
     "module": "commonjs",
     "target": "es2020",
-    "checkJs": true
+    "checkJs": false
   },
-  "include": [
-    "**/*.js"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+  "include": ["**/*.js"],
+  "exclude": ["node_modules"]
 }
-
-
