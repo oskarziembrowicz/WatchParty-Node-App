@@ -35,7 +35,6 @@ const partySchema = new mongoose.Schema({
   description: String,
   startDate: {
     type: Date,
-    // required: [true, 'A party must have a start date'],
   },
   isOnline: {
     type: Boolean,

@@ -5,10 +5,8 @@ const { logger } = require('./utils/logger');
 
 dotenv.config();
 
-// Catch synchronous programmer errors (e.g. typos, require() failures).
-// Must be registered before any other code runs.
-// Stack is logged server-side only — nothing is sent to any HTTP client
-// because no res object exists at this point.
+// Catch synchronous programmer errors
+// Must be registered before any other code runs
 process.on('uncaughtException', (err) => {
   logger.error('UNCAUGHT_EXCEPTION', {
     message: err.message,
@@ -29,8 +27,7 @@ const server = app.listen(port, () => {
   logger.info(`App running on port ${port}`);
 });
 
-// Catch unhandled promise rejections (e.g. DB query failures not wrapped in catchAsync).
-// Finish serving in-flight requests, then exit so the process manager can restart cleanly.
+// Catch unhandled promise rejections
 process.on('unhandledRejection', (err) => {
   logger.error('UNHANDLED_REJECTION', {
     message: err.message,

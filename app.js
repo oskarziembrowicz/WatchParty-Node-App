@@ -39,8 +39,6 @@ app.use(express.json({ limit: '10kb' }));
 app.use(helmet());
 
 // Data sanitization against NoSQL query injection
-// express-mongo-sanitize v2 is incompatible with Express 5 (req.query is getter-only),
-// so we sanitize only req.body manually.
 app.use((req, res, next) => {
   if (req.body) req.body = mongoSanitize.sanitize(req.body);
   next();
@@ -59,7 +57,6 @@ app.use(cookieParser());
 app.use((req, res, next) => {
   // @ts-ignore - Adding custom property to Express Request
   req.requestTime = new Date().toISOString();
-  // console.log(req.headers);
   next();
 });
 
